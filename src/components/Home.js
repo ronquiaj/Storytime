@@ -1,4 +1,4 @@
-import db from '../firebase/Firebase';
+import { db } from '../firebase/Firebase';
 import { useState, useEffect } from 'react';
 
 function Home() {
