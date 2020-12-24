@@ -1,24 +1,28 @@
-import Home from './Home';
-import Signin from './Signin';
-import AppNav from './AppNav';
-import Error from './Error';
 import { Container } from 'react-bootstrap';
 import { Route, Switch } from 'react-router';
+import { AuthenticatedProvider } from '../contexts/AuthenticatedContext';
+import Login from './Login';
+import Home from './Home';
+import Signup from './Signup';
+import AppNav from './AppNav';
+import Error from './Error';
+import Story from './Story';
+
 
 function App() {
   
   return (
     <div>
-      <AppNav/>
-      <Container className="d-flex align-items-center justify-content-center" style={{ minHeight: "100vh" }}>
-        <div className="w-100" style={{ maxWidth: '400px' }}>
-          <Switch>
-            <Route exact path="/" render={() => <Home/>}/>
-            <Route exact path="/signin" render={() => <Signin/>}/>
-            <Route path = "*" render={() => <Error/>}/>
-          </Switch>
-        </div>
-      </Container>
+      <AuthenticatedProvider>
+        <AppNav/>
+            <Switch>
+                <Route exact path="/" render={() => <Home/>}/>
+                <Route exact path="/signup" render={() => <Signup/>}/>
+                <Route exact path="/login" render={() => <Login/>}/>
+                <Route path ="/:title" render={() => <Story/>}/>
+                <Route path = "*" render={() => <Error/>}/>
+            </Switch>
+      </AuthenticatedProvider>
     </div>
    
   )
