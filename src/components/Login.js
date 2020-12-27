@@ -2,14 +2,14 @@ import React, { useContext, useState } from 'react'
 import { Link } from 'react-router-dom';
 import { useHistory } from 'react-router-dom';
 import { auth } from '../firebase/Firebase';
-import { Card, Button, Form, Alert } from 'react-bootstrap';
+import { Card, Button, Form, Alert, Container } from 'react-bootstrap';
 import useForm from '../hooks/useForm';
 import { AuthenticatedContext } from '../contexts/AuthenticatedContext';
 
 export default function Signin() {
     const [emailRef, changeEmailRef] = useForm("");
     const [passwordRef, changePasswordRef] = useForm("");
-    const {user, updateUser} = useContext(AuthenticatedContext);
+    const {updateUser} = useContext(AuthenticatedContext);
     const [alert, changeAlert] = useState("");
     const history = useHistory();
     const handleClick = e => {
@@ -26,7 +26,7 @@ export default function Signin() {
     };
 
     return (
-        <>
+        <Container style={{maxWidth: "70vh", marginTop: "4rem"}}>
          {alert ? <Alert onClick={() => changeAlert("")} variant="danger"><Alert.Heading>{alert}</Alert.Heading></Alert> : null}
             <Card>
                 <Card.Body>
@@ -49,6 +49,6 @@ export default function Signin() {
             </Card>
             <div className="w-100 text-center mt-2">
             </div>
-        </>
+        </Container>
     )
 }

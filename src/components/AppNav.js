@@ -1,14 +1,32 @@
 import { useContext } from 'react';
-import { Navbar, Nav, Form, FormControl, Button } from 'react-bootstrap';
-import { NavLink } from 'react-router-dom';
+import { Navbar, Nav, Button, NavDropdown } from 'react-bootstrap';
 import { AuthenticatedContext } from '../contexts/AuthenticatedContext';
 import { withStyles } from '@material-ui/core';
 import { auth } from '../firebase/Firebase';
+import { Link } from 'react-router-dom';
 
 const styles = {
-    navLink: {
-        margin: '1rem'
+    profilePicture: {
+        width: "2.5rem",
+        height: "3rem"
+    },
+    navbar: {
+        display: "flex",
+        justifyContent: "center",
+    },
+    userInfo: {
+        display: "flex",
+        alignItems: "center",
+        marginLeft: "auto",
+        marginRight: "1rem"
+    },
+    navItem: {
+        fontSize: "0.955rem",
+    },
+    collapse: {
+        
     }
+
 }
 
 function AppNav(props) {
@@ -25,24 +43,28 @@ function AppNav(props) {
     };
 
     return (
-        <Navbar bg="dark" variant="dark">
-            <Navbar.Brand>Storytime</Navbar.Brand>
-            <Navbar.Brand><img src={user && user.photoURL}/></Navbar.Brand>
-            <Nav className="mr-auto">
-                <NavLink className={classes.navLink} to="/">Home</NavLink>
-                {
-                    user ? <><Navbar.Brand>Welcome back, {user.displayName}</Navbar.Brand>  <Navbar.Brand onClick={handleSignout}>Sign Out</Navbar.Brand> </>: 
-                    <>
-                        <NavLink className={classes.navLink} to="/signup">Sign Up</NavLink> 
-                        <NavLink className={classes.navLink} to="/login">Log in</NavLink>
-                    </>
-                }
-            </Nav>
-            <Form inline>
-                <FormControl type="text" placeholder="Search" className="mr-sm-2" />
-                <Button variant="outline-info">Search</Button>
-            </Form>
-        </Navbar>
+            <Navbar collapseOnSelect className={classes.navbar} bg="dark" variant="dark" expand="sm">
+                <Navbar.Brand style={{marginLeft: "1rem"}} as={Link} to="/">Storytime</Navbar.Brand>
+                <Navbar.Toggle/>
+                <Navbar.Collapse className={classes.collapse}>
+                    <Nav style={{width: "100%"}}>
+                        {
+                            
+                            user ? 
+                                <div className={classes.userInfo}>
+                                    <Navbar.Brand eventKey="1" className={classes.navItem} onClick={handleSignout}><Button>Sign Out</Button></Navbar.Brand> 
+                                    <Navbar.Brand className={classes.navItem}>Welcome back, {user.displayName}</Navbar.Brand>  
+                                    <img alt="profile" className={classes.profilePicture} src={user.photoURL}/>
+                                </div>
+                            : 
+                                <>
+                                    <Nav.Link eventKey="2" as={Link} to="/signup">Sign Up</Nav.Link> 
+                                    <Nav.Link eventKey="3" as={Link} to="/login">Log in</Nav.Link>
+                                </>
+                        }
+                    </Nav>
+                </Navbar.Collapse>
+            </Navbar>
     )
 }
 export default withStyles(styles)(AppNav);

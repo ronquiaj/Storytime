@@ -4,6 +4,7 @@ import useForm from '../hooks/useForm';
 import { withStyles } from '@material-ui/core';
 import { Card, Button, Form, Container, Row, Col, Alert } from 'react-bootstrap'; 
 import { Link } from 'react-router-dom';
+import spinner from '../styles/spinner';
 
 const styles = {
   storyCard: {
@@ -17,9 +18,9 @@ const styles = {
   },
   titleLink: {
     color: "white"
-  }
-  
-};
+  },
+  ...spinner, // Spinner object on loading
+}
 
 function Home(props) {
   const {classes} = props;
@@ -28,6 +29,7 @@ function Home(props) {
   const [alert, changeAlert] = useState("");
   const [stories, changeStories] = useState([]);
   const [storyAdded, changeStoryAdded] = useState(false);
+  const [loading, changeLoading] = useState(true);
 
   const handleSubmit = async e => {
     e.preventDefault();
@@ -36,7 +38,7 @@ function Home(props) {
       await db.collection('stories').doc(titleRef).set({
         title: titleRef,
         text: textRef,
-        comments: []
+        posts: []
       });
       changeStoryAdded(true);
       console.log("Add successful!");
@@ -58,9 +60,9 @@ function Home(props) {
           <Card.Body>
             <Card.Title>{title}</Card.Title>
             <Card.Text>
-              {text}
+              {text.length < 165 ? text : `${text.slice(0, 165)}...`}
             </Card.Text>
-            <Button variant="primary"><Link className={classes.titleLink} to={`/${title}`}>Visit this story</Link></Button>
+            <Button variant="primary"><Link className={classes.titleLink} to={`/stories/${title}`}>Visit this story</Link></Button>
           </Card.Body>
           </Card>
         </Col>
@@ -68,7 +70,7 @@ function Home(props) {
       })
       changeStoryAdded(false);
       changeStories(newStories);
-      
+      changeLoading(false);
     };
     fetchData();
   }, [storyAdded]);
@@ -78,9 +80,13 @@ function Home(props) {
     {alert ? <Alert onClick={() => changeAlert("")} variant="danger"><Alert.Heading>{alert}</Alert.Heading></Alert> : null}
     <Container className={classes.container} fluid>
       <Row>
-        {stories}
+      {loading ? 
+        <div className="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+        :
+        stories}
       </Row>
     </Container>
+  
   
   <Card>
     <Card.Body>
@@ -98,10 +104,7 @@ function Home(props) {
         </Form>
     </Card.Body>
  </Card>
-
   </>
-
-  
   )
 };
 
