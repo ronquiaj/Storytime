@@ -1,10 +1,11 @@
 import { db } from '../firebase/Firebase';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import useForm from '../hooks/useForm'; 
 import { withStyles } from '@material-ui/core';
 import { Card, Button, Form, Container, Row, Col, Alert } from 'react-bootstrap'; 
-import { Link } from 'react-router-dom';
-import spinner from '../styles/spinner';
+import { Link, useHistory } from 'react-router-dom';
+import { AuthenticatedContext } from '../contexts/AuthenticatedContext';
+import Spinner from './Spinner';
 
 const styles = {
   storyCard: {
@@ -18,33 +19,37 @@ const styles = {
   },
   titleLink: {
     color: "white"
-  },
-  ...spinner, // Spinner object on loading
+  }
 }
 
 function Home(props) {
-  const {classes} = props;
-  const [titleRef, changeTitleRef] = useForm("");
-  const [textRef, changeTextRef] = useForm("");
-  const [alert, changeAlert] = useState("");
-  const [stories, changeStories] = useState([]);
-  const [storyAdded, changeStoryAdded] = useState(false);
-  const [loading, changeLoading] = useState(true);
+  const history = useHistory();
+  const { classes } = props;
+  const [ titleRef, changeTitleRef ] = useForm("");
+  const [ textRef, changeTextRef ] = useForm("");
+  const [ alert, changeAlert ] = useState("");
+  const [ stories, changeStories ] = useState([]);
+  const [ storyAdded, changeStoryAdded ] = useState(false);
+  const [ loading, changeLoading ] = useState(true);
+  const { user } = useContext(AuthenticatedContext);
 
   const handleSubmit = async e => {
-    e.preventDefault();
-    const storiesRef = await db.collection('stories').doc(titleRef).get(); // Fetch the data for storiesref
-    if (!storiesRef.exists) { 
-      await db.collection('stories').doc(titleRef).set({
-        title: titleRef,
-        text: textRef,
-        posts: []
-      });
-      changeStoryAdded(true);
-      console.log("Add successful!");
-    } else { // If there is an existing story with the same name
-      changeAlert("There is already a story with that title");
-    }
+    if (user) {
+      e.preventDefault();
+      const storiesRef = await db.collection('stories').doc(titleRef).get(); // Fetch the data for storiesref
+      if (!storiesRef.exists) { 
+        await db.collection('stories').doc(titleRef).set({
+          title: titleRef,
+          text: textRef,
+          posts: []
+        });
+        changeStoryAdded(true);
+        console.log("Add successful!");
+      } else { // If there is an existing story with the same name
+        changeAlert("There is already a story with that title");
+      }
+    } else history.push('/signup');
+  
   };
 
   useEffect(() => {
@@ -56,15 +61,15 @@ function Home(props) {
         const {text, title} = story.data();
         newStories.push(
           <Col>
-          <Card className={classes.storyCard}>
-          <Card.Body>
-            <Card.Title>{title}</Card.Title>
-            <Card.Text>
-              {text.length < 165 ? text : `${text.slice(0, 165)}...`}
-            </Card.Text>
-            <Button variant="primary"><Link className={classes.titleLink} to={`/stories/${title}`}>Visit this story</Link></Button>
-          </Card.Body>
-          </Card>
+            <Card className={classes.storyCard}>
+            <Card.Body>
+              <Card.Title>{title}</Card.Title>
+              <Card.Text>
+                {text.length < 165 ? text : `${text.slice(0, 165)}...`}
+              </Card.Text>
+              <Button variant="primary"><Link className={classes.titleLink} to={`/stories/${title}`}>Visit this story</Link></Button>
+            </Card.Body>
+            </Card>
         </Col>
         )
       })
@@ -81,7 +86,7 @@ function Home(props) {
     <Container className={classes.container} fluid>
       <Row>
       {loading ? 
-        <div className="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+        <Spinner/>
         :
         stories}
       </Row>

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import { Link } from 'react-router-dom';
 import { useHistory } from 'react-router-dom';
 import { auth } from '../firebase/Firebase';
@@ -9,7 +9,7 @@ import { AuthenticatedContext } from '../contexts/AuthenticatedContext';
 export default function Signin() {
     const [emailRef, changeEmailRef] = useForm("");
     const [passwordRef, changePasswordRef] = useForm("");
-    const {updateUser} = useContext(AuthenticatedContext);
+    const {user, updateUser} = useContext(AuthenticatedContext);
     const [alert, changeAlert] = useState("");
     const history = useHistory();
     const handleClick = e => {
@@ -24,6 +24,13 @@ export default function Signin() {
             });   
 
     };
+
+    // Used to prevent signed in user from accessing this page
+    useEffect(() => {
+        if (user) {
+            history.push('/');
+        }
+    }, [user]);
 
     return (
         <Container style={{maxWidth: "70vh", marginTop: "4rem"}}>

@@ -52,14 +52,14 @@ function AppNav(props) {
                             
                             user ? 
                                 <div className={classes.userInfo}>
-                                    <Navbar.Brand eventKey="1" className={classes.navItem} onClick={handleSignout}><Button>Sign Out</Button></Navbar.Brand> 
+                                    <Navbar.Brand className={classes.navItem} onClick={handleSignout}><Button>Sign Out</Button></Navbar.Brand> 
                                     <Navbar.Brand className={classes.navItem}>Welcome back, {user.displayName}</Navbar.Brand>  
                                     <img alt="profile" className={classes.profilePicture} src={user.photoURL}/>
                                 </div>
                             : 
                                 <>
-                                    <Nav.Link eventKey="2" as={Link} to="/signup">Sign Up</Nav.Link> 
-                                    <Nav.Link eventKey="3" as={Link} to="/login">Log in</Nav.Link>
+                                    <Nav.Link as={Link} to="/signup">Sign Up</Nav.Link> 
+                                    <Nav.Link as={Link} to="/login">Log in</Nav.Link>
                                 </>
                         }
                     </Nav>

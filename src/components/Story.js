@@ -2,17 +2,16 @@ import firebase from 'firebase/app';
 import 'firebase/firestore';
 import { useEffect, useState, useContext } from 'react';
 import { Container, Form, Button } from 'react-bootstrap';
-import { Link, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { withStyles } from '@material-ui/core';
 import { db } from '../firebase/Firebase';
 import { AuthenticatedContext } from '../contexts/AuthenticatedContext';
-import spinner from '../styles/spinner';
 import useForm from '../hooks/useForm';
 import Post from './Post';
+import Spinner from './Spinner';
 
 
 const styles = {
-    ...spinner,
     container: {
         display: "flex",
         flexDirection: "column",
@@ -56,7 +55,7 @@ const styles = {
         '@global': {
             '.effect7': {
                 display: "flex",
-                width: "60vh",
+                width: "48vh",
                 }
     }
 }
@@ -77,25 +76,27 @@ function Story(props) {
 
     // Click handler for adding a new post to the story
     const handleClick = async e => {
-        e.preventDefault();
-        const storyRef = db.collection('stories').doc(title);
-        const post = {
-            owner: {
-                photoURL: user.photoURL,   
-                username: user.displayName
-            },
-            text: newPost,
-            votes: 0
-        }
-        await storyRef.update({
-            posts: firebase.firestore.FieldValue.arrayUnion(post)
-        }).then(() => {console.log("Post successfully added!"); changePostAdded(true)}).catch(err => console.log(err));
+        if (user) {
+            e.preventDefault();
+            const storyRef = db.collection('stories').doc(title);
+            const post = {
+                owner: {
+                    photoURL: user.photoURL,   
+                    username: user.displayName
+                },
+                text: newPost,
+                votes: 0
+            }
+            await storyRef.update({
+                posts: firebase.firestore.FieldValue.arrayUnion(post)
+            }).then(() => {console.log("Post successfully added!"); changePostAdded(true)}).catch(err => console.log(err));
+        } else history.push('/signup')
+       
     }
 
 
     // Useeffect for fetching story and post data
     useEffect(() => {
-
         const fetchData = async () => {
             const storyRef = db.collection('stories').doc(title);
             const storyData = await storyRef.get();
@@ -118,7 +119,7 @@ function Story(props) {
         <>
              <Container className={classes.container}>
             {loading ? 
-            <div className="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+            <Spinner />
             :
                 <>
                 <div>
@@ -136,7 +137,7 @@ function Story(props) {
                 <Form onSubmit={handleClick} className={classes.post}>
                             <Form.Group>
                                 <Form.Label>New post</Form.Label>
-                                <Form.Control value={newPost} onChange={changeNewPost} type="text" required />
+                                <Form.Control maxLength="90" value={newPost} onChange={changeNewPost} type="text" required />
                             </Form.Group>
                             <Button className="w-100" type="submit">Post</Button>
                 </Form>

@@ -26,7 +26,7 @@ const styles = {
         height: "5rem"
     },
     text: {
-        fontSize: "2rem",
+        fontSize: "1.5rem",
         width: "100%"
     },
     arrow: {
@@ -39,7 +39,7 @@ const styles = {
     },
     '@media (max-width: 1024px)': {
         text: {
-            fontSize: "1rem"
+            fontSize: "0.84rem"
         },
         arrowContainer: {
             marginLeft: "0"
@@ -56,7 +56,7 @@ function Post(props) {
             <Col>
                 <div className={classes.user}>
                     <img className={classes.image} src={photoURL}/>
-                    <h4 style={{fontSize: "1rem"}}>{username}</h4>
+                    <h4 style={{fontSize: "0.7rem"}}>{username}</h4>
                 </div>
             </Col>
             <Col>

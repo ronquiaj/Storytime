@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import { Link } from 'react-router-dom';
 import { useHistory } from 'react-router-dom';
 import { auth } from '../firebase/Firebase';
@@ -8,14 +8,21 @@ import { AuthenticatedContext } from '../contexts/AuthenticatedContext';
 import { db } from '../firebase/Firebase';
 
 export default function Signin() {
-    const [emailRef, changeEmailRef] = useForm("");
-    const [passwordRef, changePasswordRef] = useForm("");
-    const [passwordConfirmationRef, changePasswordConfirmationRef] = useForm("");
-    const [displayNameRef, changeDisplayNameRef] = useForm("");
-    const [profilePictureRef, changeProfilePictureRef] = useForm("");
-    const {updateUser} = useContext(AuthenticatedContext);
-    const [alert, changeAlert] = useState("");
+    const [ emailRef, changeEmailRef ] = useForm("");
+    const [ passwordRef, changePasswordRef ] = useForm("");
+    const [ passwordConfirmationRef, changePasswordConfirmationRef ] = useForm("");
+    const [ displayNameRef, changeDisplayNameRef ] = useForm("");
+    const [ profilePictureRef, changeProfilePictureRef ] = useForm("");
+    const { user, updateUser } = useContext(AuthenticatedContext);
+    const [ alert, changeAlert ] = useState("");
     const history = useHistory();
+
+       // Used to prevent signed in user from accessing this page
+       useEffect(() => {
+        if (user) {
+            history.push('/');
+        }
+    }, [user]);
 
     // Checks whether the password and password confirmation match
     const checkPassword = () => {
@@ -40,16 +47,17 @@ export default function Signin() {
                     displayName: displayNameRef,
                     photoURL: profilePictureRef
                 });
-    
+                updateUser(currentUser); // Sets the Context of the user to the currently signed in user
                 const userData = {
                     email: emailRef,
                     displayName: displayNameRef, 
-                    profilePicture: profilePictureRef,
+                    photoURL: profilePictureRef,
                     password: passwordRef
                 };
     
-                updateUser(userData); // Sets the Context of the user to the currently signed in user
+               
                 await db.collection('users').doc(displayNameRef).set(userData);
+                updateUser(userData)
 
                 history.push('/');
                 console.log("Account successfully created!");
@@ -94,7 +102,7 @@ export default function Signin() {
                         </Form.Group>
                         <Form.Group id="displayName">
                             <Form.Label>Display Name</Form.Label>
-                            <Form.Control value={displayNameRef} onChange={changeDisplayNameRef} type="text" required />
+                            <Form.Control maxLength="12" value={displayNameRef} onChange={changeDisplayNameRef} type="text" required />
                         </Form.Group>
                         <Form.Group id="profilePictureRef">
                             <Form.Label>Profile Picture URL</Form.Label>
