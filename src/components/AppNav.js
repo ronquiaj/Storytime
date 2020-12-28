@@ -22,11 +22,7 @@ const styles = {
     },
     navItem: {
         fontSize: "0.955rem",
-    },
-    collapse: {
-        
     }
-
 }
 
 function AppNav(props) {

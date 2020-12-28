@@ -105,7 +105,7 @@ export default function Signin() {
                             <Form.Control maxLength="12" value={displayNameRef} onChange={changeDisplayNameRef} type="text" required />
                         </Form.Group>
                         <Form.Group id="profilePictureRef">
-                            <Form.Label>Profile Picture URL</Form.Label>
+                            <Form.Label>Profile Picture</Form.Label>
                             <Form.Control value={profilePictureRef} onChange={changeProfilePictureRef} type="text" required />
                         </Form.Group>
                         <Button className="w-100" type="submit">Sign Up</Button>

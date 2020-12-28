@@ -6,6 +6,7 @@ import Signup from './Signup';
 import AppNav from './AppNav';
 import Error from './Error';
 import Story from './Story';
+import User from './User';
 
 
 function App() {
@@ -18,7 +19,8 @@ function App() {
                 <Route exact path="/" render={() => <Home/>}/>
                 <Route exact path="/signup" render={() => <Signup/>}/>
                 <Route exact path="/login" render={() => <Login/>}/>
-                <Route path ="/stories/:title" render={routeProps => <Story {...routeProps}/>}/>
+                <Route exact path ="/users/:user" render={routeProps => <User {...routeProps}/>}/>
+                <Route exact path ="/stories/:title" render={routeProps => <Story {...routeProps}/>}/>
                 <Route path = "*" render={() => <Error/>}/>
             </Switch>
       </AuthenticatedProvider>

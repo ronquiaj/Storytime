@@ -1,5 +1,6 @@
 import { withStyles } from '@material-ui/core';
 import { Row, Col } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 
 const styles = {
     container: {
@@ -30,7 +31,8 @@ const styles = {
         width: "100%"
     },
     arrow: {
-        margin: "0.5rem",
+        display: "flex",
+        margin: "0 0.5rem",
         fontSize: "1.5rem",
     },
     arrowContainer: {
@@ -56,7 +58,7 @@ function Post(props) {
             <Col>
                 <div className={classes.user}>
                     <img className={classes.image} src={photoURL}/>
-                    <h4 style={{fontSize: "0.7rem"}}>{username}</h4>
+                    <Link to={`/users/${username}`}><h4 style={{fontSize: "0.7rem"}}>{username}</h4></Link>
                 </div>
             </Col>
             <Col>
