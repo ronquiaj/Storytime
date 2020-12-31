@@ -1,9 +1,10 @@
-import { useContext } from 'react';
-import { Navbar, Nav, Button, NavDropdown } from 'react-bootstrap';
+import { useContext, useState, useEffect } from 'react';
+import { Navbar, Nav, Button } from 'react-bootstrap';
 import { AuthenticatedContext } from '../contexts/AuthenticatedContext';
 import { withStyles } from '@material-ui/core';
-import { auth } from '../firebase/Firebase';
+import { auth, db } from '../firebase/Firebase';
 import { Link } from 'react-router-dom';
+
 
 const styles = {
     profilePicture: {
@@ -28,6 +29,7 @@ const styles = {
 function AppNav(props) {
     const { user, updateUser } = useContext(AuthenticatedContext);
     const { classes } = props;
+    const [ profilePicture, changeProfilePicture ] = useState(""); 
 
     const handleSignout = () => {
         auth.signOut().then(() => {
@@ -37,6 +39,18 @@ function AppNav(props) {
             console.log(`There was an error logging you out, ${err}`)
         })
     };
+
+    useEffect(() => {
+        const watchUserChanges = () => {
+            if (user) {
+                db.collection('users').doc(user.displayName).get().then(data => {
+                    const { photoURL } = data.data();
+                    changeProfilePicture(photoURL);
+                });
+            }
+        };
+        watchUserChanges();
+    }, [user])
 
     return (
             <Navbar collapseOnSelect className={classes.navbar} bg="dark" variant="dark" expand="sm">
@@ -50,7 +64,7 @@ function AppNav(props) {
                                 <div className={classes.userInfo}>
                                     <Navbar.Brand className={classes.navItem} onClick={handleSignout}><Button>Sign Out</Button></Navbar.Brand> 
                                     <Navbar.Brand className={classes.navItem}>Welcome back, {user.displayName}</Navbar.Brand>  
-                                    <img alt="profile" className={classes.profilePicture} src={user.photoURL}/>
+                                    <Link to={`/users/${user.displayName}/edit`}><img alt="profile"  className={classes.profilePicture} src={profilePicture}/></Link>
                                 </div>
                             : 
                                 <>

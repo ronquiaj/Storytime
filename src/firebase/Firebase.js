@@ -1,6 +1,7 @@
 import firebase from 'firebase/app';
 import 'firebase/firestore'; 
 import 'firebase/auth'; 
+import 'firebase/storage';
 
 // Initialize Cloud Firestore through Firebase
 const app = firebase.initializeApp({ 
@@ -14,9 +15,12 @@ const app = firebase.initializeApp({
  
   const auth = app.auth();
   const db = app.firestore();
+  const storage = firebase.storage();
+
   
 
   export {
     db,
-    auth
+    auth,
+    storage
   };

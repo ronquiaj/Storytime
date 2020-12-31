@@ -11,10 +11,9 @@ export default function useForm(inputVal) {
         changeVal("");
     }
 
-    const setFile = e => {
-        changeVal(e.target.files[0]);
-        console.log(e.target.files[0]);
+    const setValNoE = input => {
+        changeVal(input);
     }
 
-    return [val, setVal, reset, setFile];
+    return [val, setVal, setValNoE];
 }

@@ -49,7 +49,6 @@ function Home(props) {
         changeAlert("There is already a story with that title");
       }
     } else history.push('/signup');
-  
   };
 
   useEffect(() => {
@@ -57,24 +56,30 @@ function Home(props) {
       const storyRef = db.collection('stories');
       const storyData = await storyRef.get();
       const newStories = [];
-      storyData.forEach(story => {
-        const {text, title} = story.data();
-        newStories.push(
-          <Col>
-            <Card className={classes.storyCard}>
-            <Card.Body>
-              <Card.Title>{title}</Card.Title>
-              <Card.Text>
-                {text.length < 165 ? text : `${text.slice(0, 165)}...`}
-              </Card.Text>
-              <Button variant="primary"><Link className={classes.titleLink} to={`/stories/${title}`}>Visit this story</Link></Button>
-            </Card.Body>
-            </Card>
-        </Col>
-        )
-      })
-      changeStoryAdded(false);
-      changeStories(newStories);
+      // If the stories database has existing stories
+      if (!storyData.empty) {
+        storyData.forEach(story => {
+          const {text, title} = story.data();
+          newStories.push(
+            <Col key={title}>
+              <Card className={classes.storyCard}>
+              <Card.Body>
+                <Card.Title>{title}</Card.Title>
+                <Card.Text>
+                  {text.length < 165 ? text : `${text.slice(0, 165)}...`}
+                </Card.Text>
+                <Button variant="primary"><Link className={classes.titleLink} to={`/stories/${title}`}>Visit this story</Link></Button>
+              </Card.Body>
+              </Card>
+          </Col>
+          )
+        });
+        changeStoryAdded(false);
+        changeStories(newStories);
+      } else { // If there are no existing stories
+        changeStories(<h1 style={{margin: "4rem"}}>There are no stories yet!</h1>)
+      }
+     
       changeLoading(false);
     };
     fetchData();

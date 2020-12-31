@@ -1,18 +1,17 @@
 import React, { useContext, useState, useEffect } from 'react'
 import { Link } from 'react-router-dom';
 import { useHistory } from 'react-router-dom';
-import { auth } from '../firebase/Firebase';
 import { Card, Button, Form, Alert, Container } from 'react-bootstrap';
 import useForm from '../hooks/useForm';
 import { AuthenticatedContext } from '../contexts/AuthenticatedContext';
-import { db } from '../firebase/Firebase';
+import { db, storage, auth } from '../firebase/Firebase';
 
 export default function Signin() {
     const [ emailRef, changeEmailRef ] = useForm("");
     const [ passwordRef, changePasswordRef ] = useForm("");
     const [ passwordConfirmationRef, changePasswordConfirmationRef ] = useForm("");
     const [ displayNameRef, changeDisplayNameRef ] = useForm("");
-    const [ profilePictureRef, changeProfilePictureRef ] = useForm("");
+    const [ profilePictureRef, changeProfilePictureRef ] = useState("");
     const { user, updateUser } = useContext(AuthenticatedContext);
     const [ alert, changeAlert ] = useState("");
     const history = useHistory();
@@ -40,28 +39,32 @@ export default function Signin() {
     }
 
     const addUser = async () => {
-        // Add to Firebase Authentication
-            await auth.createUserWithEmailAndPassword(emailRef, passwordRef).then(async () => {
-                const currentUser = auth.currentUser;
-                await currentUser.updateProfile({
-                    displayName: displayNameRef,
-                    photoURL: profilePictureRef
-                });
-                updateUser(currentUser); // Sets the Context of the user to the currently signed in user
-                const userData = {
-                    email: emailRef,
-                    displayName: displayNameRef, 
-                    photoURL: profilePictureRef,
-                    password: passwordRef
-                };
-    
-               
-                await db.collection('users').doc(displayNameRef).set(userData);
-                updateUser(userData)
+        // Add profile picture to google cloud storage
+        await storage.ref(`/images/${displayNameRef}`).put(profilePictureRef).then(async () => {
+            await storage.ref('images').child(displayNameRef).getDownloadURL().then(async (url) => {
+                   // Add to Firebase Authentication
+                    await auth.createUserWithEmailAndPassword(emailRef, passwordRef).then(async () => {
+                        const currentUser = auth.currentUser;
+                        await currentUser.updateProfile({
+                            displayName: displayNameRef,
+                            photoURL: url
+                        }).catch(err => {throw new Error(err)});
+                        const userData = {
+                            email: emailRef,
+                            displayName: displayNameRef, 
+                            photoURL: url,
+                            password: passwordRef,
+                            bio: "This is where your bio would be!"
+                        };     
+                        await db.collection('users').doc(displayNameRef).set(userData).catch(err => console.log(err));
+                        updateUser(userData); // Sets the Context of the user to the currently signed in user
 
-                history.push('/');
-                console.log("Account successfully created!");
-            }).catch(() => changeAlert("That email is already being used"));
+                        history.push('/');
+                        console.log("Account successfully created!");
+                    }).catch(() => changeAlert("That email is already being used"));
+                        }).catch(err => console.log(err));
+        }).catch(err => console.log(err));
+     
     }
 
     const validateAndAdd = () => {
@@ -79,6 +82,10 @@ export default function Signin() {
     const handleClick = e => {
         e.preventDefault();
         validateAndAdd();
+    };
+
+    const handleChange = e => {
+        changeProfilePictureRef(e.target.files[0]);
     };
 
     return (
@@ -106,7 +113,7 @@ export default function Signin() {
                         </Form.Group>
                         <Form.Group id="profilePictureRef">
                             <Form.Label>Profile Picture</Form.Label>
-                            <Form.Control value={profilePictureRef} onChange={changeProfilePictureRef} type="text" required />
+                            <Form.Control onChange={handleChange} type="file" accept="image/png, image/jpeg, image/jpg" required />
                         </Form.Group>
                         <Button className="w-100" type="submit">Sign Up</Button>
                         <Form.Group style={{marginTop: "2rem", textAlign: "center" }}>
