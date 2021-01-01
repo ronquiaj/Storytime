@@ -6,6 +6,7 @@ import { useHistory } from 'react-router-dom';
 import { withStyles } from '@material-ui/core';
 import { db } from '../firebase/Firebase';
 import { AuthenticatedContext } from '../contexts/AuthenticatedContext';
+import { UpdatedUserContext } from "../contexts/UpdatedUserContext";
 import useForm from '../hooks/useForm';
 import Post from './Post';
 import Spinner from './Spinner';
@@ -68,12 +69,20 @@ function Story(props) {
   const { title } = props.match.params;
   const { classes } = props;
   const { user } = useContext(AuthenticatedContext);
+  const { updated } = useContext(UpdatedUserContext);
   const [loading, changeLoading] = useState(true);
   const [displayText, changeText] = useState("");
   const [posts, changePosts] = useState([]);
   const [postAdded, changePostAdded] = useState(false);
   const [newPost, changeNewPost] = useForm("");
   const [alert, changeAlert] = useState("");
+  const [voted, changedVoted] = useState(false);
+
+  const toggleVotes = () => {
+    changedVoted(true);
+    changedVoted(false);
+    console.log("Hello");
+  };
 
   // Click handler for adding a new post to the story
   const handleClick = async (e) => {
@@ -124,7 +133,12 @@ function Story(props) {
         // Get all the posts from the database for this particular story
         if (posts.length > 0) {
           const newPosts = posts.map((post) => (
-            <Post {...post} title={title} />
+            <Post
+              key={post.owner.username}
+              {...post}
+              title={title}
+              toggleVotes={toggleVotes}
+            />
           ));
           changePosts(newPosts);
         }
@@ -133,7 +147,7 @@ function Story(props) {
       } else history.push("/error");
     };
     fetchData();
-  }, [postAdded]);
+  }, [postAdded, voted, updated]);
 
   return (
     <>

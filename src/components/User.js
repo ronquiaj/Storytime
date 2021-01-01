@@ -1,15 +1,12 @@
 import { useState, useEffect, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
-import { db } from '../firebase/Firebase';
-import { } from 'react-bootstrap';
-import { AuthenticatedContext } from '../contexts/AuthenticatedContext';
+import { db } from "../firebase/Firebase";
 import Spinner from './Spinner';
 import UserDisplay from './UserDisplay';
 
 function User(props) {
     const { user } = props.match.params;
     const history = useHistory();
-    const { currentUser, updateUser } = useContext(AuthenticatedContext);
     const [ userData, changeUserData ] = useState(null);
     const [ pageLoaded, changePageLoaded ] = useState(false);
 

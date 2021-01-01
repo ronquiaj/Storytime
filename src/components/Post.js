@@ -1,4 +1,3 @@
-import firebase from "firebase/app";
 import "firebase/firestore";
 import { useContext } from "react";
 import { withStyles } from '@material-ui/core';
@@ -55,7 +54,7 @@ const styles = {
 }
 
 function Post(props) {
-    const { classes, text, votes, title } = props;
+    const { classes, text, votes, title, toggleVotes } = props;
     const { photoURL, username } = props.owner;
     const { user } = useContext(AuthenticatedContext);
     const history = useHistory();
@@ -87,24 +86,32 @@ function Post(props) {
           votePost.voters.length === 0 ||
           votePost.voters.find((voter) => voter.name === user.displayName) // If voters array is empty or if the current user hasn't voted yet
         ) {
-          // Update voter array
-          console.log(storyData.data().posts[postIndex].voters);
-        //   await storyTitle.update({
-        //     "posts[].voters": firebase.firestore.FieldValue.arrayUnion(newVoter), // Append the new voter to the post
-        //   });
+            const updatedPosts = [];
+            storyData.data().posts.forEach((post) => {
+              // Cycle through the data returned from the stories posts, and modify the post being voted on
+              if (post.owner.username === votePost.owner.username) {
+                updatedPosts.push({
+                  ...votePost,
+                  voters: [newVoter],
+                  votes: voteValue,
+                });
+              } else updatedPosts.push(post);
+            });
+            const updatedStory = {
+              ...storyData.data(),
+              posts: updatedPosts,
+            };
 
-        //   // Update vote amount
-        //   await storyTitle.update({
-        //     "posts[].votes": firebase.firestore.FieldValue.increment(voteValue),
-        //   });
-
-        //   console.log("Vote successful!");
-        // } else {
-        //   if (voteValue > 0) {
-        //       console.log("Positive");
-        //   } else {
-        //       console.log("Negative");
-        //   }
+            await storyTitle.set(updatedStory);
+            console.log("Vote successful!");
+            console.log(toggleVotes);
+            toggleVotes();
+        } else {
+            if (voteValue > 0) {
+                console.log("Positive");
+            } else {
+                console.log("Negative");
+            }
         }
       }
     };

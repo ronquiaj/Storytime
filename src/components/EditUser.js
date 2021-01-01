@@ -6,6 +6,7 @@ import { useHistory } from 'react-router-dom';
 import Spinner from './Spinner';
 import useForm from '../hooks/useForm';
 import { AuthenticatedContext } from '../contexts/AuthenticatedContext';
+import { UpdatedUserContext } from "../contexts/UpdatedUserContext";
 
 const styles = {
     container: {
@@ -52,6 +53,7 @@ function EditUser(props) {
     const [ displayImageRef, changeDisplayImageRef ] = useState("");
     const [ pageLoaded, changePageLoaded ] = useState(false);
     const { user } = useContext(AuthenticatedContext);
+    const { userUpdated } = useContext(UpdatedUserContext);
     const [ alert, changeAlert ] = useState("");
 
     const handleChange = e => {
@@ -103,6 +105,7 @@ function EditUser(props) {
                         },
                         { merge: true }
                       );
+                    userUpdated();
                     changeAlert("Successfully updated!");
                   });
               })
