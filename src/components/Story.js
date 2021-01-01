@@ -1,7 +1,7 @@
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 import { useEffect, useState, useContext } from 'react';
-import { Container, Form, Button } from 'react-bootstrap';
+import { Container, Form, Button, Alert } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
 import { withStyles } from '@material-ui/core';
 import { db } from '../firebase/Firebase';
@@ -64,89 +64,123 @@ const styles = {
 
 
 function Story(props) {
-    const history = useHistory();
-    const { title } = props.match.params;
-    const { classes } = props;
-    const { user } = useContext(AuthenticatedContext);
-    const [ loading, changeLoading ] = useState(true);
-    const [ displayText, changeText ] = useState("");
-    const [ posts, changePosts ] = useState([]);
-    const [ postAdded, changePostAdded ] = useState(false);
-    const [ newPost, changeNewPost ] = useForm("");
+  const history = useHistory();
+  const { title } = props.match.params;
+  const { classes } = props;
+  const { user } = useContext(AuthenticatedContext);
+  const [loading, changeLoading] = useState(true);
+  const [displayText, changeText] = useState("");
+  const [posts, changePosts] = useState([]);
+  const [postAdded, changePostAdded] = useState(false);
+  const [newPost, changeNewPost] = useForm("");
+  const [alert, changeAlert] = useState("");
 
-    // Click handler for adding a new post to the story
-    const handleClick = async e => {
-        if (user) {
-            e.preventDefault();
-            const storyRef = db.collection('stories').doc(title);
-            const post = {
-                owner: {
-                    photoURL: user.photoURL,   
-                    username: user.displayName
-                },
-                text: newPost,
-                votes: 0
-            }
-            await storyRef.update({
-                posts: firebase.firestore.FieldValue.arrayUnion(post)
-            }).then(() => {console.log("Post successfully added!"); changePostAdded(true)}).catch(err => console.log(err));
-        } else history.push('/signup')
-       
-    }
-
-
-    // Useeffect for fetching story and post data
-    useEffect(() => {
-        const fetchData = async () => {
-            const storyRef = db.collection('stories').doc(title);
-            const storyData = await storyRef.get();
-            if (storyData.exists) {
-                const { posts, text } = storyData.data();
-                changeLoading(false);
-                // Get all the posts from the database for this particular story
-                if (posts.length > 0) {
-                    const newPosts = posts.map(post => <Post {...post} />);
-                    changePosts(newPosts);
-                }
-                changeText(text);
-                changePostAdded(false);
-            } else history.push("/error");
+  // Click handler for adding a new post to the story
+  const handleClick = async (e) => {
+    if (user) {
+      e.preventDefault();
+      if (!await checkPosted()) { // Check to see if this user has already posted
+        const storyRef = db.collection("stories").doc(title);
+        const post = {
+          owner: {
+            photoURL: user.photoURL,
+            username: user.displayName,
+          },
+          text: newPost,
+          votes: 0,
+          voters: [],
         };
-        fetchData();
-    }, [postAdded]);
+        await storyRef
+          .update({
+            posts: firebase.firestore.FieldValue.arrayUnion(post), // Appending a new post to the story
+          })
+          .then(() => {
+            console.log("Post successfully added!");
+            changePostAdded(true);
+          })
+          .catch((err) => console.log(err));
+      } else {
+          changeAlert("You've already posted, wait for the time to run out.");
+      }
 
-    return (
-        <>
-             <Container className={classes.container}>
-            {loading ? 
-            <Spinner />
-            :
-                <>
-                <div>
-                    <h1 className={classes.title}>{title}</h1>
-                    
-                    <div className="box effect7">
-                        <textarea disabled="yes" className={classes.text} value={displayText}/>
-                    </div>
-                </div>
-                
-                <ul className={classes.postContainer}>
-                    {posts}
-                </ul>
+    } else history.push("/signup");
+  };
 
-                <Form onSubmit={handleClick} className={classes.post}>
-                            <Form.Group>
-                                <Form.Label>New post</Form.Label>
-                                <Form.Control maxLength="90" value={newPost} onChange={changeNewPost} type="text" required />
-                            </Form.Group>
-                            <Button className="w-100" type="submit">Post</Button>
-                </Form>
-                </>
-            }
-             </Container>
-        
-        </>
-    )
+  // Check to see if there is already a post with the username, returns false if there is no post made by the user yet
+  const checkPosted = async () => {
+    const storyRef = await db.collection("stories").doc(title).get();
+    
+    return storyRef.data().posts.some((post) => post.owner.username === user.displayName);
+  };
+
+  // Useeffect for fetching story and post data
+  useEffect(() => {
+    const fetchData = async () => {
+      const storyRef = db.collection("stories").doc(title);
+      const storyData = await storyRef.get();
+      if (storyData.exists) {
+        const { posts, text } = storyData.data();
+        changeLoading(false);
+        // Get all the posts from the database for this particular story
+        if (posts.length > 0) {
+          const newPosts = posts.map((post) => (
+            <Post {...post} title={title} />
+          ));
+          changePosts(newPosts);
+        }
+        changeText(text);
+        changePostAdded(false);
+      } else history.push("/error");
+    };
+    fetchData();
+  }, [postAdded]);
+
+  return (
+    <>
+      {alert ? (
+        <Alert onClick={() => changeAlert("")} variant="danger">
+          <Alert.Heading>{alert}</Alert.Heading>
+        </Alert>
+      ) : null}
+      <Container className={classes.container}>
+        {loading ? (
+          <Spinner />
+        ) : (
+          <>
+            <div>
+              <h1 className={classes.title}>{title}</h1>
+
+              <div className="box effect7">
+                <textarea
+                  disabled="yes"
+                  className={classes.text}
+                  value={displayText}
+                />
+              </div>
+            </div>
+
+            <ul className={classes.postContainer}>{posts}</ul>
+
+            <Form onSubmit={handleClick} className={classes.post}>
+              <Form.Group>
+                <Form.Label>New post</Form.Label>
+                <Form.Control
+                  maxLength="90"
+                  value={newPost}
+                  onChange={changeNewPost}
+                  type="text"
+                  required
+                />
+              </Form.Group>
+              <Button className="w-100" type="submit">
+                Post
+              </Button>
+            </Form>
+          </>
+        )}
+      </Container>
+    </>
+  );
 }
 
 export default withStyles(styles)(Story);

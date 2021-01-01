@@ -10,17 +10,17 @@ import Spinner from './Spinner';
 const styles = {
   storyCard: {
     width: "25rem",
-    margin: "3rem 1rem"
+    margin: "3rem 1rem",
   },
   container: {
     display: "flex",
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
   },
   titleLink: {
-    color: "white"
-  }
-}
+    color: "white",
+  },
+};
 
 function Home(props) {
   const history = useHistory();
