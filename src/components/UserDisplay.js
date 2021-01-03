@@ -25,7 +25,7 @@ function UserDisplay(props) {
     return (
       <Container className={classes.container}>
         <h1>{displayName}</h1>
-        <img className={classes.profilePicture} src={photoURL} />
+        <img alt="profile pic" className={classes.profilePicture} src={photoURL} />
         <h4 className={classes.bio}>{bio}</h4>
       </Container>
     );

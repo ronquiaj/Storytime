@@ -81,7 +81,31 @@ function Story(props) {
   const toggleVotes = () => {
     changedVoted(true);
     changedVoted(false);
-    console.log("Hello");
+  };
+
+  // Method that looks at all of the posts, gets the highest voted post and adds it to the existing story text. The posts are all deleted afterwards
+  const addToStory = async () => {
+    const storyRef = await db.collection("stories").doc(title).get();
+    let highestVote = { votes: 0 }; // Represents the object to be returned
+    let tieVotes = []; // Represents an array that is pushed values that tie with the highest vote count, is rewritten when a new high vote is encountered
+    // This loop will return an object representing the text to be added to the story, and the user who won
+    storyRef.data().posts.forEach((post) => {
+      if (post.votes > highestVote.votes) {
+        tieVotes = []; // Reset the tievotes array
+        highestVote = post;
+        tieVotes.push(highestVote);
+      } else if (post.votes === highestVote.votes) {
+        console.log(post.owner.username);
+        tieVotes.push(post);
+      }
+    });
+
+    console.log(
+      `Highest vote: ${
+        tieVotes[Math.floor(Math.random() * tieVotes.length)].owner.username
+      }`
+    );
+    // tieVotes.forEach((item) => console.log(item));
   };
 
   // Click handler for adding a new post to the story
@@ -134,6 +158,7 @@ function Story(props) {
         if (posts.length > 0) {
           const newPosts = posts.map((post) => (
             <Post
+              changeAlert={changeAlert}
               key={post.owner.username}
               {...post}
               title={title}
@@ -147,6 +172,7 @@ function Story(props) {
       } else history.push("/error");
     };
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [postAdded, voted, updated]);
 
   return (
@@ -190,6 +216,7 @@ function Story(props) {
                 Post
               </Button>
             </Form>
+            <Button onClick={addToStory}>Click Me</Button>
           </>
         )}
       </Container>

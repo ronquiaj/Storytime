@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { db } from "../firebase/Firebase";
 import Spinner from './Spinner';
@@ -20,7 +20,7 @@ function User(props) {
         };
         fetchData();
         changePageLoaded(true);
-    }, []);
+    }, []); // eslint-disable-next-line react-hooks/exhaustive-deps
 
     return (
         <div>

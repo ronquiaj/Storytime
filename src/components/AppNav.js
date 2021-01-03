@@ -46,8 +46,8 @@ function AppNav(props) {
           changeDisplayName(displayName);
         }
       };
-      console.log(updated);
       setNav();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user, updated]);
 
     const handleSignout = () => {

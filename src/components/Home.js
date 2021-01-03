@@ -83,7 +83,7 @@ function Home(props) {
       changeLoading(false);
     };
     fetchData();
-  }, [storyAdded]);
+  }, [storyAdded]); // eslint-disable-next-line react-hooks/exhaustive-deps
 
   return (
     <>
