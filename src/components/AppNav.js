@@ -36,7 +36,7 @@ function AppNav(props) {
 
     useEffect(() => {
       const setNav = async () => {
-        if (user) {
+        if (user && user.displayName) {
           const userDataRef = await db
             .collection("users")
             .doc(user.displayName)

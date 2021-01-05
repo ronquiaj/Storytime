@@ -85,27 +85,48 @@ function Story(props) {
 
   // Method that looks at all of the posts, gets the highest voted post and adds it to the existing story text. The posts are all deleted afterwards
   const addToStory = async () => {
-    const storyRef = await db.collection("stories").doc(title).get();
+    const storyRef = db.collection("stories").doc(title);
+    const storyData = await storyRef.get();
+    let winner;
     let highestVote = { votes: 0 }; // Represents the object to be returned
     let tieVotes = []; // Represents an array that is pushed values that tie with the highest vote count, is rewritten when a new high vote is encountered
     // This loop will return an object representing the text to be added to the story, and the user who won
-    storyRef.data().posts.forEach((post) => {
+    storyData.data().posts.forEach((post) => {
       if (post.votes > highestVote.votes) {
         tieVotes = []; // Reset the tievotes array
         highestVote = post;
         tieVotes.push(highestVote);
       } else if (post.votes === highestVote.votes) {
-        console.log(post.owner.username);
         tieVotes.push(post);
       }
     });
 
-    console.log(
-      `Highest vote: ${
-        tieVotes[Math.floor(Math.random() * tieVotes.length)].owner.username
-      }`
+    if (tieVotes.length > 1 || highestVote.votes === 0) {
+      // Get a random winner from the posts that have tied
+      winner = tieVotes[Math.floor(Math.random() * tieVotes.length)];
+    } else {
+      winner = highestVote;
+    }
+    console.log(winner);
+    console.log(storyData.data().text);
+    console.log(winner.text);
+    const updatedText = `${storyData.data().text} ${winner.text}`;
+    storyRef.set({
+      text: updatedText,
+      posts: [],
+      title: title,
+    });
+
+    const userRef = db.collection("users").doc(winner.owner.username);
+    const userData = await userRef.get();
+
+    userRef.set(
+      {
+        winningPosts: userData.data().winningPosts + 1,
+      },
+      { merge: true }
     );
-    // tieVotes.forEach((item) => console.log(item));
+    console.log("Post elimination successful");
   };
 
   // Click handler for adding a new post to the story

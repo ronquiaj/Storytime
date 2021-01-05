@@ -50,11 +50,12 @@ export default function Signin() {
                             photoURL: url
                         }).catch(err => {throw new Error(err)});
                         const userData = {
-                            email: emailRef,
-                            displayName: displayNameRef, 
-                            photoURL: url,
-                            password: passwordRef,
-                            bio: "This is where your bio would be!"
+                          email: emailRef,
+                          displayName: displayNameRef,
+                          photoURL: url,
+                          password: passwordRef,
+                          bio: "This is where your bio would be!",
+                          winningPosts: 0,
                         };     
                         await db.collection('users').doc(displayNameRef).set(userData).catch(err => console.log(err));
                         updateUser(userData); // Sets the Context of the user to the currently signed in user
