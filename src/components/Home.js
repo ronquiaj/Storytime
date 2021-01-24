@@ -2,25 +2,12 @@ import { db } from '../firebase/Firebase';
 import { useState, useEffect, useContext } from 'react';
 import useForm from '../hooks/useForm'; 
 import { withStyles } from '@material-ui/core';
-import { Card, Button, Form, Container, Row, Col, Alert } from 'react-bootstrap'; 
-import { Link, useHistory } from 'react-router-dom';
+import { Alert } from 'react-bootstrap'; 
+import { useHistory } from 'react-router-dom';
 import { AuthenticatedContext } from '../contexts/AuthenticatedContext';
-import Spinner from './Spinner';
-
-const styles = {
-  storyCard: {
-    width: "25rem",
-    margin: "3rem 1rem",
-  },
-  container: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  titleLink: {
-    color: "white",
-  },
-};
+import HomeDisplay from './HomeDisplay';
+import MiniStory from './MiniStory';
+import styles from '../styles/homeStyles';
 
 function Home(props) {
   const history = useHistory();
@@ -60,19 +47,7 @@ function Home(props) {
       if (!storyData.empty) {
         storyData.forEach(story => {
           const {text, title} = story.data();
-          newStories.push(
-            <Col key={title}>
-              <Card className={classes.storyCard}>
-              <Card.Body>
-                <Card.Title>{title}</Card.Title>
-                <Card.Text>
-                  {text.length < 165 ? text : `${text.slice(0, 165)}...`}
-                </Card.Text>
-                <Button variant="primary"><Link className={classes.titleLink} to={`/stories/${title}`}>Visit this story</Link></Button>
-              </Card.Body>
-              </Card>
-          </Col>
-          )
+          newStories.push(<MiniStory title={title} classes={classes} text={text}/>)
         });
         changeStoryAdded(false);
         changeStories(newStories);
@@ -88,32 +63,7 @@ function Home(props) {
   return (
     <>
     {alert ? <Alert onClick={() => changeAlert("")} variant="danger"><Alert.Heading>{alert}</Alert.Heading></Alert> : null}
-    <Container className={classes.container} fluid>
-      <Row>
-      {loading ? 
-        <Spinner/>
-        :
-        stories}
-      </Row>
-    </Container>
-  
-  
-  <Card>
-    <Card.Body>
-        <h2 className="text-center mb-4">Add new story</h2>
-        <Form onSubmit={handleSubmit}>
-            <Form.Group>
-                <Form.Label>Title</Form.Label>
-                <Form.Control value={titleRef} onChange={changeTitleRef} required />
-            </Form.Group>
-            <Form.Group>
-                <Form.Label>Beginning text</Form.Label>
-                <Form.Control value={textRef} onChange={changeTextRef} required />
-            </Form.Group>
-            <Button className="w-100" type="submit">Add story</Button>
-        </Form>
-    </Card.Body>
- </Card>
+    <HomeDisplay alert={alert} classes={classes} loading={loading} stories={stories} handleSubmit={handleSubmit} titleRef={titleRef} changeTitleRef={changeTitleRef} textRef={textRef} changeTextRef={changeTextRef} />
   </>
   )
 };

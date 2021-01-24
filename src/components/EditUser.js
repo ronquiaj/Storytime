@@ -1,47 +1,13 @@
 import { useState, useEffect, useContext } from 'react';
 import { db, storage } from '../firebase/Firebase';
 import { withStyles } from '@material-ui/core';
-import { Form, Container, Button, Alert, Row } from 'react-bootstrap';
+import { Alert } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
-import Spinner from './Spinner';
 import useForm from '../hooks/useForm';
 import { AuthenticatedContext } from '../contexts/AuthenticatedContext';
 import { UpdatedUserContext } from "../contexts/UpdatedUserContext";
-
-const styles = {
-    container: {
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        width: "100%",
-        textAlign: "center"
-    },
-    bio: {
-        display: "flex",
-        flexDirection: "column"
-    },
-    profilePicture: {
-        width: "50%",
-        height: "50%"
-    },
-    imageSubmit: {
-        width: "25%",
-        margin: "1rem auto"
-    },
-    spinner: {
-        display: "flex",
-        margin: "auto"
-    },
-    row: {
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center"
-    },
-    button: {
-        color: "white",
-        textDecoration: "none"
-    }
-};
+import styles from '../styles/editUserStyles';
+import EditUserForm from './EditUserForn';
 
 function EditUser(props) {
     const { classes } = props;
@@ -135,39 +101,7 @@ function EditUser(props) {
             <Alert.Heading>{alert}</Alert.Heading>
           </Alert>
         ) : null}
-        <Container className={classes.container}>
-          {!pageLoaded ? (
-            <Row className={classes.row}>
-              <Spinner className={classes.spinner} />
-            </Row>
-          ) : (
-            <Form onSubmit={handleSubmit}>
-              <h1>{displayNameRef}</h1>
-              <img className={classes.profilePicture} src={displayImageRef} />
-              <Form.Group>
-                <Row>
-                  <Form.Control
-                    className={classes.imageSubmit}
-                    onChange={handleChange}
-                    type="file"
-                    accept="image/png, image/jpeg, image/jpg"
-                  />
-                </Row>
-              </Form.Group>
-              <Form.Group className={classes.bio}>
-                <Form.Label>Bio</Form.Label>
-                <textarea
-                  value={bioRef}
-                  onChange={changeBioRef}
-                  type="text"
-                />
-              </Form.Group>
-              <Button type="submit" >
-                  Submit
-              </Button>
-            </Form>
-          )}
-        </Container>
+        <EditUserForm classes={classes} pageLoaded={pageLoaded} handleSubmit={handleSubmit} displayNameRef={displayNameRef} displayImageRef={displayImageRef} handleChange={handleChange} bioRef={bioRef} changeBioRef={changeBioRef}/>
       </>
     );
 }

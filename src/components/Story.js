@@ -9,59 +9,8 @@ import { AuthenticatedContext } from '../contexts/AuthenticatedContext';
 import { UpdatedUserContext } from "../contexts/UpdatedUserContext";
 import useForm from '../hooks/useForm';
 import Post from './Post';
-import Spinner from './Spinner';
-
-
-const styles = {
-    container: {
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center"
-    },
-    title: {
-        margin: "2rem 0",
-        textAlign: "center",
-    },
-    '@global': {
-        '.effect7': {
-            display: "flex",
-            width: "100vh",
-            height: "20rem",
-            position: 'relative',
-            webkitBoxShadow: '0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset',
-            mozBoxShadow: '0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset',
-            boxShadow: '0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset',
-            padding: "1rem"
-            }
-    },
-    text: {
-        width: "100%",
-        height: "100%",
-        background: "rgba(0, 0, 0, 0)",
-        border: "none",
-        resize: "none",
-        color: "black",
-    },  
-    post: {
-        margin: "2.5rem 0"
-    },
-    postContainer: {
-        display: "flex",
-        width: "100%",
-        flexDirection: "column",
-        marginTop: "2rem"
-    },
-    '@media (max-width: 748px)': {
-        '@global': {
-            '.effect7': {
-                display: "flex",
-                width: "48vh",
-                }
-    }
-}
-}
-
+import styles from '../styles/storyStyles.js';
+import StoryDisplay from './StoryDisplay';
 
 
 function Story(props) {
@@ -203,44 +152,7 @@ function Story(props) {
           <Alert.Heading>{alert}</Alert.Heading>
         </Alert>
       ) : null}
-      <Container className={classes.container}>
-        {loading ? (
-          <Spinner />
-        ) : (
-          <>
-            <div>
-              <h1 className={classes.title}>{title}</h1>
-
-              <div className="box effect7">
-                <textarea
-                  disabled="yes"
-                  className={classes.text}
-                  value={displayText}
-                />
-              </div>
-            </div>
-
-            <ul className={classes.postContainer}>{posts}</ul>
-
-            <Form onSubmit={handleClick} className={classes.post}>
-              <Form.Group>
-                <Form.Label>New post</Form.Label>
-                <Form.Control
-                  maxLength="90"
-                  value={newPost}
-                  onChange={changeNewPost}
-                  type="text"
-                  required
-                />
-              </Form.Group>
-              <Button className="w-100" type="submit">
-                Post
-              </Button>
-            </Form>
-            <Button onClick={addToStory}>Click Me</Button>
-          </>
-        )}
-      </Container>
+      <StoryDisplay classes={classes} handleClick={handleClick} loading={loading} title={title} displayText={displayText} posts={posts} newPost={newPost} changeNewPost={changeNewPost} addToStory={addToStory}/>
     </>
   );
 }

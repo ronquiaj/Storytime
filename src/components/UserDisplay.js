@@ -1,23 +1,6 @@
 import { withStyles } from '@material-ui/core';
 import { Container } from 'react-bootstrap';
-
-const styles = {
-  container: {
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
-    textAlign: "center",
-    marginTop: "2rem",
-    width: "100vw",
-  },
-  profilePicture: {
-    width: "50%",
-    margin: "auto",
-  },
-  bio: {
-      margin: "2rem"
-  },
-};
+import styles from '../styles/userDisplayStyles';
 
 function UserDisplay(props) {
     const { classes, displayName, photoURL, bio, winningPosts } = props;

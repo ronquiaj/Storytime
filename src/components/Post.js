@@ -1,63 +1,16 @@
 import "firebase/firestore";
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { withStyles } from '@material-ui/core';
-import { Row, Col } from 'react-bootstrap';
-import { Link, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { db } from "../firebase/Firebase";
 import { AuthenticatedContext } from "../contexts/AuthenticatedContext";
-
-const styles = {
-    container: {
-        display: "flex",
-        width: "100%",
-        height: "8rem",
-        margin: "0.7rem 0",
-        alignItems: "center",
-        justifyContent: "space-around",
-        webkitBoxShadow: "7px 7px 63px -28px rgba(0,0,0,0.37)",
-        mozBoxShadow: "7px 7px 63px -28px rgba(0,0,0,0.37)",
-        boxShadow: "7px 7px 63px -28px rgba(0,0,0,0.37)"
-    },
-    user: {
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        width: "25%",
-        margin: "1rem auto 0 0"
-    },
-    image: {
-        width: "5.5rem", 
-        height: "5rem"
-    },
-    text: {
-        fontSize: "1.5rem",
-        width: "100%"
-    },
-    arrow: {
-        display: "flex",
-        margin: "0 0.5rem",
-        fontSize: "1.5rem",
-    },
-    arrowContainer: {
-        marginLeft: "8rem",
-        display: "flex"
-    },
-    '@media (max-width: 1024px)': {
-        text: {
-            fontSize: "0.84rem"
-        },
-        arrowContainer: {
-            marginLeft: "0"
-        }
-}
-}
+import styles from '../styles/postStyles';
+import PostDisplay from './PostDisplay';
 
 function Post(props) {
     const { classes, text, votes, title, toggleVotes, changeAlert } = props;
     const { photoURL, username } = props.owner;
     const { user } = useContext(AuthenticatedContext);
-    const { voteColor, changeVoteColor } = useState('gray');
     const history = useHistory();
 
     // Function to handle a user that has already voted, returns an object with voted and addToVote values
@@ -144,37 +97,9 @@ function Post(props) {
             
             toggleVotes();
         }
-      
     };
 
-    return (
-      <Row className={classes.container}>
-        <Col>
-          <div className={classes.user}>
-            <img alt="user profile pic" className={classes.image} src={photoURL} />
-            <Link to={`/users/${username}`}>
-              <h4 style={{ fontSize: "0.7rem" }}>{username}</h4>
-            </Link>
-          </div>
-        </Col>
-        <Col>
-          <h4 className={classes.text}>{text}</h4>
-        </Col>
-        <Col>
-          <div className={classes.arrowContainer}>
-            <i
-                onClick={() => handleVote(1)}
-                className={`fas fa-arrow-up ${classes.arrow}`}
-            ></i>
-            {votes}
-            <i
-              onClick={() => handleVote(-1)}
-              className={`fas fa-arrow-down ${classes.arrow}`}
-            ></i>
-          </div>
-        </Col>
-      </Row>
-    );
+    return <PostDisplay  classes={classes} photoURL={photoURL} username={username} text={text} handleVote={handleVote} votes={votes} />
 }
 
 export default withStyles(styles)(Post);
