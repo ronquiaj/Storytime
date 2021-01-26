@@ -83,8 +83,6 @@ function Post(props) {
                     votes: newVoter.voted + post.votes // Returns the updated votes
                 });
                 }
-
-               
               } else updatedPosts.push(post);
               
             });
@@ -94,7 +92,6 @@ function Post(props) {
             };
 
             await storyTitle.set(updatedStory);
-            
             toggleVotes();
         }
     };

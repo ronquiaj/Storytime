@@ -1,8 +1,8 @@
 import React from 'react';
 import { Card, Button, Form, Container, Row } from 'react-bootstrap'; 
 import Spinner from './Spinner';
-export default function HomeDisplay(props) {
-    const { classes, loading, stories, handleSubmit, titleRef, changeTitleRef, textRef, changeTextRef, alert } = props;
+export default function HomeForm(props) {
+    const { classes, loading, stories, handleSubmit, titleRef, changeTitleRef, textRef, changeTextRef } = props;
     return (
         <>
         <Container className={classes.container} fluid>

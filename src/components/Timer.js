@@ -1,18 +1,9 @@
-// Logic to format the time
-
-const timer = (time, amount) => {
-  // time is represented by seconds
-  const endTime = formatTime(time);
-  const { seconds, minutes, hours } = endTime;
-  console.log(`End Time: ${hours}:${minutes}:${seconds}`);
-};
-
+// Returns the current time plus the inputted time, represents the time from now plus time
 const formatTime = (time) => {
   const currentTime = new Date(); // Get current time
   const hours = currentTime.getHours();
   const minutes = currentTime.getMinutes();
   const seconds = currentTime.getSeconds();
-  console.log(`Start Time: ${hours}:${minutes}:${seconds}`);
   let newSeconds,
     newMinutes,
     newHours,
@@ -21,7 +12,6 @@ const formatTime = (time) => {
   if (seconds + time >= 60) {
     newSeconds = seconds + time - 60;
     carryMinute = 1;
-    console.log("carrying minutes");
   } else {
     newSeconds = seconds + time;
   }
@@ -29,7 +19,6 @@ const formatTime = (time) => {
   if (minutes + carryMinute >= 60) {
     newMinutes = minutes + carryMinute - 60;
     carryHour = 1;
-    console.log("carrying hour");
   } else {
     newMinutes = minutes + carryMinute;
   }
@@ -48,3 +37,15 @@ const formatTime = (time) => {
   };
   return endTime;
 };
+
+// Accepts a time interval, and then the amount of rounds for this current story, returns an object
+// with the endtime for each round
+const partitionRounds = (time, rounds) => {
+  const roundEndTimes = {};
+  for (let i = 1; i <= rounds; i ++) {
+    roundEndTimes[i] = formatTime(time * i);
+  }
+  return roundEndTimes;
+}
+
+export default partitionRounds;

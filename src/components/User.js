@@ -20,7 +20,7 @@ function User(props) {
         };
         fetchData();
         changePageLoaded(true);
-    }, []); // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [user, history]); // eslint-disable-next-line react-hooks/exhaustive-deps
 
     return (
         <div>

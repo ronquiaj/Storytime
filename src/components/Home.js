@@ -5,7 +5,7 @@ import { withStyles } from '@material-ui/core';
 import { Alert } from 'react-bootstrap'; 
 import { useHistory } from 'react-router-dom';
 import { AuthenticatedContext } from '../contexts/AuthenticatedContext';
-import HomeDisplay from './HomeDisplay';
+import HomeForm from './HomeForm';
 import MiniStory from './MiniStory';
 import styles from '../styles/homeStyles';
 
@@ -20,6 +20,7 @@ function Home(props) {
   const [ loading, changeLoading ] = useState(true);
   const { user } = useContext(AuthenticatedContext);
 
+  // Handler for when we add to story, checks our database to see if there is a story with that name already, and if there isn't adds to database
   const handleSubmit = async e => {
     if (user) {
       e.preventDefault();
@@ -38,6 +39,7 @@ function Home(props) {
     } else history.push('/signup');
   };
 
+  // Use effect to fetch the storydata, and then renders a ministory component for each story found in the database
   useEffect(() => {
     const fetchData = async () => {
       const storyRef = db.collection('stories');
@@ -58,12 +60,12 @@ function Home(props) {
       changeLoading(false);
     };
     fetchData();
-  }, [storyAdded]); // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [storyAdded, classes]); // eslint-disable-next-line react-hooks/exhaustive-deps
 
   return (
     <>
     {alert ? <Alert onClick={() => changeAlert("")} variant="danger"><Alert.Heading>{alert}</Alert.Heading></Alert> : null}
-    <HomeDisplay alert={alert} classes={classes} loading={loading} stories={stories} handleSubmit={handleSubmit} titleRef={titleRef} changeTitleRef={changeTitleRef} textRef={textRef} changeTextRef={changeTextRef} />
+    <HomeForm alert={alert} classes={classes} loading={loading} stories={stories} handleSubmit={handleSubmit} titleRef={titleRef} changeTitleRef={changeTitleRef} textRef={textRef} changeTextRef={changeTextRef} />
   </>
   )
 };

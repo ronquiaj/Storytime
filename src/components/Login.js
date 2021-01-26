@@ -29,7 +29,7 @@ export default function Signin() {
         if (user) {
             history.push('/');
         }
-    }, [user]);
+    }, [user, history]);
 
     return <LoginForm changeAlert={changeAlert} handleClick={handleClick} emailRef={emailRef} changeEmailRef={changeEmailRef} passwordRef={passwordRef} changePasswordRef={changePasswordRef} alert={alert}/>
 }

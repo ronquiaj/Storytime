@@ -20,7 +20,7 @@ export default function Signin() {
         if (user) {
             history.push('/');
         }
-    }, [user]);
+    }, [user, history]);
 
     // Checks whether the password and password confirmation match
     const checkPassword = () => {

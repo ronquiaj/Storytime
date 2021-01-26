@@ -12,7 +12,7 @@ export default function EditUserForn(props) {
           ) : (
             <Form onSubmit={handleSubmit}>
               <h1>{displayNameRef}</h1>
-              <img className={classes.profilePicture} src={displayImageRef} />
+              <img alt="profile" className={classes.profilePicture} src={displayImageRef} />
               <Form.Group>
                 <Row>
                   <Form.Control

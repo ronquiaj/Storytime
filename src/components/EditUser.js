@@ -42,7 +42,7 @@ function EditUser(props) {
             }
             } 
         fetchData();
-    }, [user]);
+    }, [user, history, pageUser, initialBioRef]);
 
     const handleSubmit = (e) => {
       e.preventDefault();

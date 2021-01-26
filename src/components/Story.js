@@ -1,7 +1,7 @@
 import firebase from 'firebase/app';
 import 'firebase/firestore';
-import { useEffect, useState, useContext } from 'react';
-import { Container, Form, Button, Alert } from 'react-bootstrap';
+import { useEffect, useState, useContext, useCallback } from 'react';
+import { Alert } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
 import { withStyles } from '@material-ui/core';
 import { db } from '../firebase/Firebase';
@@ -11,6 +11,7 @@ import useForm from '../hooks/useForm';
 import Post from './Post';
 import styles from '../styles/storyStyles.js';
 import StoryDisplay from './StoryDisplay';
+import paritionRounds from './Timer';
 
 
 function Story(props) {
@@ -56,9 +57,6 @@ function Story(props) {
     } else {
       winner = highestVote;
     }
-    console.log(winner);
-    console.log(storyData.data().text);
-    console.log(winner.text);
     const updatedText = `${storyData.data().text} ${winner.text}`;
     storyRef.set({
       text: updatedText,
@@ -116,11 +114,20 @@ function Story(props) {
     return storyRef.data().posts.some((post) => post.owner.username === user.displayName);
   };
 
-  // Useeffect for fetching story and post data
-  useEffect(() => {
-    const fetchData = async () => {
+  // Method to get story data from the database
+  const fetchData = useCallback(
+    async () => {
       const storyRef = db.collection("stories").doc(title);
       const storyData = await storyRef.get();
+      return storyData;
+      },
+    [title],
+  )
+
+  // Useeffect for fetching story and post data
+  useEffect(() => {
+    const fetchStoryData = async () => {
+      const storyData = await fetchData();
       if (storyData.exists) {
         const { posts, text } = storyData.data();
         changeLoading(false);
@@ -140,10 +147,18 @@ function Story(props) {
         changeText(text);
         changePostAdded(false);
       } else history.push("/error");
-    };
-    fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [postAdded, voted, updated]);
+    }
+    fetchStoryData();
+  }, [postAdded, voted, updated, fetchData, history, title]);
+
+  // useEffect for looking at the time for this story
+  useEffect(() => {
+    const fetchTimeData = async () => {
+      const storyData = await fetchData();
+      
+    }
+    fetchTimeData();
+  }, [fetchData]);
 
   return (
     <>
