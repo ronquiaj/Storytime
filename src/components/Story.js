@@ -11,8 +11,6 @@ import useForm from '../hooks/useForm';
 import Post from './Post';
 import styles from '../styles/storyStyles.js';
 import StoryDisplay from './StoryDisplay';
-import paritionRounds from './Timer';
-
 
 function Story(props) {
   const history = useHistory();

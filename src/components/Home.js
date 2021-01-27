@@ -8,12 +8,15 @@ import { AuthenticatedContext } from '../contexts/AuthenticatedContext';
 import HomeForm from './HomeForm';
 import MiniStory from './MiniStory';
 import styles from '../styles/homeStyles';
+import { partitionRounds } from './Timer';
 
 function Home(props) {
   const history = useHistory();
   const { classes } = props;
   const [ titleRef, changeTitleRef ] = useForm("");
   const [ textRef, changeTextRef ] = useForm("");
+  const [ timeIntervalRef, changeTimeIntervalRef ] = useForm("");
+  const [ roundsRef, changeRoundsRef ] = useForm("")
   const [ alert, changeAlert ] = useState("");
   const [ stories, changeStories ] = useState([]);
   const [ storyAdded, changeStoryAdded ] = useState(false);
@@ -26,10 +29,18 @@ function Home(props) {
       e.preventDefault();
       const storiesRef = await db.collection('stories').doc(titleRef).get(); // Fetch the data for storiesref
       if (!storiesRef.exists) { 
+        // Below object represents the time information for this story, such as what round we are currently on, and the end of each round
+        const timeInformation = {
+          totalRounds: parseInt(roundsRef),
+          currentRound: 1,
+          timeInterval: parseInt(timeIntervalRef),
+          roundEnd: partitionRounds(parseInt(timeIntervalRef), parseInt(roundsRef))
+        }
         await db.collection('stories').doc(titleRef).set({
           title: titleRef,
           text: textRef,
-          posts: []
+          posts: [],
+          timeInformation
         });
         changeStoryAdded(true);
         console.log("Add successful!");
@@ -65,7 +76,7 @@ function Home(props) {
   return (
     <>
     {alert ? <Alert onClick={() => changeAlert("")} variant="danger"><Alert.Heading>{alert}</Alert.Heading></Alert> : null}
-    <HomeForm alert={alert} classes={classes} loading={loading} stories={stories} handleSubmit={handleSubmit} titleRef={titleRef} changeTitleRef={changeTitleRef} textRef={textRef} changeTextRef={changeTextRef} />
+    <HomeForm alert={alert} classes={classes} loading={loading} stories={stories} handleSubmit={handleSubmit} titleRef={titleRef} changeTitleRef={changeTitleRef} textRef={textRef} changeTextRef={changeTextRef} timeIntervalRef={timeIntervalRef} changeTimeIntervalRef={changeTimeIntervalRef} roundsRef={roundsRef} changeRoundsRef={changeRoundsRef}/>
   </>
   )
 };
