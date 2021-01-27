@@ -41,9 +41,9 @@ const formatTime = (time) => {
 // Accepts a time interval, and then the amount of rounds for this current story, returns an object
 // with the endtime for each round
 const partitionRounds = (time, rounds) => {
-  const roundEndTimes = {};
+  const roundEndTimes = [];
   for (let i = 1; i <= rounds; i ++) {
-    roundEndTimes[i] = formatTime(time * i);
+    roundEndTimes.push(formatTime(time * i));
   }
   return roundEndTimes;
 }
@@ -55,7 +55,7 @@ const compareTime = (currentTime, otherTime) => {
   } else if (currentTime.hours === otherTime.hours) {
     if (currentTime.minutes > otherTime.minutes) {
       return true
-    } else if (currentTime.minutes == otherTime.minutes) {
+    } else if (currentTime.minutes === otherTime.minutes) {
       if (currentTime.seconds >= otherTime.seconds) {
         return true
       }
@@ -63,7 +63,16 @@ const compareTime = (currentTime, otherTime) => {
   }
   return false;
 }
+
+// Returns an object with the current seconds, minutes, and hours
+const getCurrentTime = () => {
+  const current = new Date();
+  const timeObject = {
+    seconds: current.getSeconds(), minutes: current.getMinutes(), hours: current.getHours()
+  }
+  return timeObject;
+}
+
 export {
-  partitionRounds, compareTime
+  partitionRounds, compareTime, getCurrentTime
 };
-///we are going to be going through roundsends, and checking to see if our current time is greater than the other times

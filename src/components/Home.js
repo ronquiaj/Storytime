@@ -8,7 +8,7 @@ import { AuthenticatedContext } from '../contexts/AuthenticatedContext';
 import HomeForm from './HomeForm';
 import MiniStory from './MiniStory';
 import styles from '../styles/homeStyles';
-import { partitionRounds } from './Timer';
+import { partitionRounds } from './timer';
 
 function Home(props) {
   const history = useHistory();
@@ -60,7 +60,7 @@ function Home(props) {
       if (!storyData.empty) {
         storyData.forEach(story => {
           const {text, title} = story.data();
-          newStories.push(<MiniStory title={title} classes={classes} text={text}/>)
+          newStories.push(<MiniStory key={title} title={title} classes={classes} text={text}/>)
         });
         changeStoryAdded(false);
         changeStories(newStories);

@@ -11,6 +11,7 @@ import useForm from '../hooks/useForm';
 import Post from './Post';
 import styles from '../styles/storyStyles.js';
 import StoryDisplay from './StoryDisplay';
+import { compareTime, getCurrentTime } from './timer';
 
 function Story(props) {
   const history = useHistory();
@@ -153,7 +154,11 @@ function Story(props) {
   useEffect(() => {
     const fetchTimeData = async () => {
       const storyData = await fetchData();
-      
+      const { timeInformation } = storyData.data();
+      const currentTime = getCurrentTime();
+      for (let roundEnd of timeInformation.roundEnd) {
+        console.log(compareTime(currentTime, roundEnd));
+      }
     }
     fetchTimeData();
   }, [fetchData]);
