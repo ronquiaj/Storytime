@@ -26,6 +26,9 @@ function Story(props) {
   const [newPost, changeNewPost] = useForm("");
   const [alert, changeAlert] = useState("");
   const [voted, changedVoted] = useState(false);
+  const [currentRound, changeCurrentRound] = useState(1);
+  const [totalRounds, changeTotalRounds] = useState(10);
+  const [timeObject, changeTimeObject] = useState({});
 
   const toggleVotes = () => {
     changedVoted(true);
@@ -150,17 +153,37 @@ function Story(props) {
     fetchStoryData();
   }, [postAdded, voted, updated, fetchData, history, title]);
 
-  // useEffect for looking at the time for this story
+  // useEffect for looking at the time for this story at the beginning, sets up a time interval that will each second compare currenttime against database roundends
   useEffect(() => {
+    // const time = setInterval(() => {
+    //   changeUpdatePage(num => num + 1);
+    // }, 1000)
     const fetchTimeData = async () => {
       const storyData = await fetchData();
-      const { timeInformation } = storyData.data();
+      let { timeInformation } = storyData.data();
       const currentTime = getCurrentTime();
-      for (let roundEnd of timeInformation.roundEnd) {
-        console.log(compareTime(currentTime, roundEnd));
+     let newCurrentRound = timeInformation.currentRound;
+      // iterate through the roundend list, comparing currentround and currenttime to each round end time
+       console.log("Hi")
+      timeInformation.roundEnd.forEach((roundEnd, index) => {
+        if (timeInformation.currentRound < index + 1 && compareTime(currentTime, roundEnd)) { // if our current time is greater than this time, and our current round is less than this round
+          newCurrentRound = index + 1;
+        }
+      changeCurrentRound(newCurrentRound);
+      changeTotalRounds(timeInformation.totalRounds);
+      });
+      const updatedTimeInformation = {
+        roundEnd: timeInformation.roundEnd,
+        currentRound: newCurrentRound,
+        totalRounds: timeInformation.totalRounds,
+        timeInterval: timeInformation.timeInterval
       }
+      db.collection('stories').doc(title).update({
+        timeInformation: updatedTimeInformation
+      });
     }
     fetchTimeData();
+    // return () => clearInterval(time);
   }, [fetchData]);
 
   return (
@@ -170,7 +193,7 @@ function Story(props) {
           <Alert.Heading>{alert}</Alert.Heading>
         </Alert>
       ) : null}
-      <StoryDisplay classes={classes} handleClick={handleClick} loading={loading} title={title} displayText={displayText} posts={posts} newPost={newPost} changeNewPost={changeNewPost} addToStory={addToStory}/>
+      <StoryDisplay classes={classes} handleClick={handleClick} loading={loading} title={title} displayText={displayText} posts={posts} newPost={newPost} changeNewPost={changeNewPost} addToStory={addToStory} currentRound={currentRound} totalRounds={totalRounds}/>
     </>
   );
 }

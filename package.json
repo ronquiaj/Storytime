@@ -9,6 +9,7 @@
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
     "bootstrap": "^4.5.3",
+    "date-arithmetic": "^4.1.0",
     "firebase": "^8.2.1",
     "firebase-admin": "^9.4.2",
     "firebaseui": "^4.7.1",

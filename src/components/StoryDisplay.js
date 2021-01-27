@@ -4,7 +4,7 @@ import { Container, Form, Button } from 'react-bootstrap';
 import Spinner from './Spinner';
 
 export default function StoryDisplay(props) {
-    const { classes, handleClick, loading, title, displayText, posts, newPost, changeNewPost, addToStory } = props;
+    const { classes, handleClick, loading, title, displayText, posts, newPost, changeNewPost, addToStory, currentRound, totalRounds } = props;
     return (
         <Container className={classes.container}>
         {loading ? (
@@ -13,7 +13,7 @@ export default function StoryDisplay(props) {
           <>
             <div>
               <h1 className={classes.title}>{title}</h1>
-
+              <h1>Round: {currentRound}/{totalRounds}</h1>
               <div className="box effect7">
                 <textarea
                   disabled="yes"
@@ -22,9 +22,8 @@ export default function StoryDisplay(props) {
                 />
               </div>
             </div>
-
+        
             <ul className={classes.postContainer}>{posts}</ul>
-
             <Form onSubmit={handleClick} className={classes.post}>
               <Form.Group>
                 <Form.Label>New post</Form.Label>
