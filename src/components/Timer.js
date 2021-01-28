@@ -42,7 +42,7 @@ const formatTime = (time) => {
 // with the endtime for each round
 const partitionRounds = (time, rounds) => {
   const roundEndTimes = [];
-  for (let i = 1; i <= rounds; i ++) {
+  for (let i = 0; i < rounds; i++) {
     roundEndTimes.push(formatTime(time * i));
   }
   return roundEndTimes;
@@ -64,6 +64,17 @@ const compareTime = (currentTime, otherTime) => {
   return false;
 }
 
+// Returns the difference in seconds between the current time and other time and current time
+const calculateTimeDifference = (currentTime, otherTime) => {
+  const {seconds, minutes, hours} = otherTime;
+  const {seconds: currentSeconds, minutes: currentMinutes, hours: currentHours} = currentTime;
+
+
+  // calculate the difference
+  const secondsDifference = (seconds - currentSeconds) + ((minutes * 60) - (currentMinutes * 60)) + ((hours * 3600) - (currentHours * 3600));
+  return secondsDifference;
+}
+
 // Returns an object with the current seconds, minutes, and hours
 const getCurrentTime = () => {
   const current = new Date();
@@ -74,5 +85,8 @@ const getCurrentTime = () => {
 }
 
 export {
-  partitionRounds, compareTime, getCurrentTime
+  partitionRounds,
+  compareTime,
+  getCurrentTime,
+  calculateTimeDifference,
 };

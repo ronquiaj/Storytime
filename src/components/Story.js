@@ -11,7 +11,7 @@ import useForm from '../hooks/useForm';
 import Post from './Post';
 import styles from '../styles/storyStyles.js';
 import StoryDisplay from './StoryDisplay';
-import { compareTime, getCurrentTime } from './timer';
+import { compareTime, getCurrentTime, calculateTimeDifference } from "./timer";
 
 function Story(props) {
   const history = useHistory();
@@ -29,6 +29,7 @@ function Story(props) {
   const [currentRound, changeCurrentRound] = useState(1);
   const [totalRounds, changeTotalRounds] = useState(10);
   const [timeObject, changeTimeObject] = useState({});
+  const [secondsLeft, changeSecondsLeft] = useState(0);
 
   const toggleVotes = () => {
     changedVoted(true);
@@ -43,39 +44,42 @@ function Story(props) {
     let highestVote = { votes: 0 }; // Represents the object to be returned
     let tieVotes = []; // Represents an array that is pushed values that tie with the highest vote count, is rewritten when a new high vote is encountered
     // This loop will return an object representing the text to be added to the story, and the user who won
-    storyData.data().posts.forEach((post) => {
-      if (post.votes > highestVote.votes) {
-        tieVotes = []; // Reset the tievotes array
-        highestVote = post;
-        tieVotes.push(highestVote);
-      } else if (post.votes === highestVote.votes) {
-        tieVotes.push(post);
+    const { posts } = storyData.data();
+    if (posts.length > 0) {
+      posts.forEach((post) => {
+        if (post.votes > highestVote.votes) {
+          tieVotes = []; // Reset the tievotes array
+          highestVote = post;
+          tieVotes.push(highestVote);
+        } else if (post.votes === highestVote.votes) {
+          tieVotes.push(post);
+        }
+      });
+
+      if (tieVotes.length > 1 || highestVote.votes === 0) {
+        // Get a random winner from the posts that have tied
+        winner = tieVotes[Math.floor(Math.random() * tieVotes.length)];
+      } else {
+        winner = highestVote;
       }
-    });
+      const updatedText = `${storyData.data().text} ${winner.text}`;
+      storyRef.set({
+        text: updatedText,
+        posts: [],
+        title: title,
+      });
 
-    if (tieVotes.length > 1 || highestVote.votes === 0) {
-      // Get a random winner from the posts that have tied
-      winner = tieVotes[Math.floor(Math.random() * tieVotes.length)];
-    } else {
-      winner = highestVote;
+      const userRef = db.collection("users").doc(winner.owner.username);
+      const userData = await userRef.get();
+
+      userRef.set(
+        {
+          winningPosts: userData.data().winningPosts + 1,
+        },
+        { merge: true }
+      );
+      console.log("Post elimination successful");
     }
-    const updatedText = `${storyData.data().text} ${winner.text}`;
-    storyRef.set({
-      text: updatedText,
-      posts: [],
-      title: title,
-    });
-
-    const userRef = db.collection("users").doc(winner.owner.username);
-    const userData = await userRef.get();
-
-    userRef.set(
-      {
-        winningPosts: userData.data().winningPosts + 1,
-      },
-      { merge: true }
-    );
-    console.log("Post elimination successful");
   };
 
   // Click handler for adding a new post to the story
@@ -152,38 +156,36 @@ function Story(props) {
   }, [postAdded, voted, updated, fetchData, history, title]);
 
   //
-  const updateTimeInDatabase = async () => {
+  const updateDatabase = async () => {
     if (timeObject.currentRound !== timeObject.totalRounds) {
       console.log("checking time");
-       const currentTime = getCurrentTime();
-       let newCurrentRound = timeObject.currentRound;
-       let oldRound = newCurrentRound;
-       // iterate through the roundend list, comparing currentround and currenttime to each round end time
-       timeObject.roundEnd.forEach((roundEnd, index) => {
-         if (
-           timeObject.currentRound < index + 1 &&
-           compareTime(currentTime, roundEnd)
-         ) {
-           // if our current time is greater than this time, and our current round is less than this round
-           newCurrentRound = index + 1;
-         }
-       });
+      const currentTime = getCurrentTime();
+      let newCurrentRound = timeObject.currentRound;
+      // iterate through the roundend list, comparing currentround and currenttime to each round end time
+      timeObject.roundEnd.forEach((roundEnd, index) => {
+        if (
+          timeObject.currentRound < index + 1 &&
+          compareTime(currentTime, roundEnd)
+        ) {
+          // if our current time is greater than this time, and our current round is less than this round
+          newCurrentRound = index + 1;
+          console.log("in here");
+        }
+      });
 
-       changeCurrentRound(newCurrentRound);
-       // Rounds have changed, update time in database and add to story
-       if (newCurrentRound !== oldRound) {
-         addToStory();
-         console.log("setting database");
-         const updatedTimeInformation = {
-           roundEnd: timeObject.roundEnd,
-           currentRound: newCurrentRound,
-           totalRounds: timeObject.totalRounds,
-           timeInterval: timeObject.timeInterval,
-         };
-         await db.collection("stories").doc(title).update({
-           timeInformation: updatedTimeInformation,
-         });
-       }
+      changeSecondsLeft(timeObject.timeInterval + calculateTimeDifference(currentTime, timeObject.roundEnd[newCurrentRound - 1]));
+      changeCurrentRound(newCurrentRound);
+      // Rounds have changed, update time in database and add to story
+      await addToStory();
+      const updatedTimeInformation = {
+        roundEnd: timeObject.roundEnd,
+        currentRound: newCurrentRound,
+        totalRounds: timeObject.totalRounds,
+        timeInterval: timeObject.timeInterval,
+      };
+      await db.collection("stories").doc(title).update({
+        timeInformation: updatedTimeInformation,
+      });;
     }
   };
 
@@ -202,7 +204,7 @@ function Story(props) {
   // this useeffect sets an interval that runs every second, fetching data from the database
   useEffect(() => { 
     const time = setInterval(() => {
-      updateTimeInDatabase();
+      updateDatabase();
     }, 1000);
     setTimeout(() => changeLoading(false), 1750);
     return () => clearInterval(time);
@@ -216,6 +218,7 @@ function Story(props) {
         </Alert>
       ) : null}
       <StoryDisplay
+        secondsLeft={secondsLeft}
         classes={classes}
         handleClick={handleClick}
         loading={loading}
