@@ -82,7 +82,8 @@ function Story(props) {
   const handleClick = async (e) => {
     if (user) {
       e.preventDefault();
-      if (!await checkPosted()) { // Check to see if this user has already posted
+      if (!(await checkPosted())) {
+        // Check to see if this user has already posted
         const storyRef = db.collection("stories").doc(title);
         const post = {
           owner: {
@@ -103,28 +104,26 @@ function Story(props) {
           })
           .catch((err) => console.log(err));
       } else {
-          changeAlert("You've already posted, wait for the time to run out.");
+        changeAlert("You've already posted, wait for the time to run out.");
       }
-
     } else history.push("/signup");
   };
 
   // Check to see if there is already a post with the username, returns false if there is no post made by the user yet
   const checkPosted = async () => {
     const storyRef = await db.collection("stories").doc(title).get();
-    
-    return storyRef.data().posts.some((post) => post.owner.username === user.displayName);
+
+    return storyRef
+      .data()
+      .posts.some((post) => post.owner.username === user.displayName);
   };
 
   // Method to get story data from the database
-  const fetchData = useCallback(
-    async () => {
-      const storyRef = db.collection("stories").doc(title);
-      const storyData = await storyRef.get();
-      return storyData;
-      },
-    [title],
-  )
+  const fetchData = useCallback(async () => {
+    const storyRef = db.collection("stories").doc(title);
+    const storyData = await storyRef.get();
+    return storyData;
+  }, [title]);
 
   // Useeffect for fetching story and post data
   useEffect(() => {
@@ -132,7 +131,6 @@ function Story(props) {
       const storyData = await fetchData();
       if (storyData.exists) {
         const { posts, text } = storyData.data();
-        changeLoading(false);
         // Get all the posts from the database for this particular story
         if (posts.length > 0) {
           const newPosts = posts.map((post) => (
@@ -149,42 +147,57 @@ function Story(props) {
         changeText(text);
         changePostAdded(false);
       } else history.push("/error");
-    }
+    };
     fetchStoryData();
   }, [postAdded, voted, updated, fetchData, history, title]);
 
-  // useEffect for looking at the time for this story at the beginning, sets up a time interval that will each second compare currenttime against database roundends
+  //
+  const updateTimeInDatabase = async () => {
+    console.log("checking time");
+    const currentTime = getCurrentTime();
+    let newCurrentRound = timeObject.currentRound;
+    // iterate through the roundend list, comparing currentround and currenttime to each round end time
+    timeObject.roundEnd.forEach((roundEnd, index) => {
+      if (
+        timeObject.currentRound < index + 1 &&
+        compareTime(currentTime, roundEnd)
+      ) {
+        // if our current time is greater than this time, and our current round is less than this round
+        newCurrentRound = index + 1;
+      }
+    });
+
+    changeCurrentRound(newCurrentRound);
+    const updatedTimeInformation = {
+      roundEnd: timeObject.roundEnd,
+      currentRound: newCurrentRound,
+      totalRounds: timeObject.totalRounds,
+      timeInterval: timeObject.timeInterval,
+    };
+    await db.collection("stories").doc(title).update({
+      timeInformation: updatedTimeInformation,
+    });
+  };
+
+  // useEffect for setting the time object by getting time data from database
   useEffect(() => {
-    // const time = setInterval(() => {
-    //   changeUpdatePage(num => num + 1);
-    // }, 1000)
     const fetchTimeData = async () => {
       const storyData = await fetchData();
       let { timeInformation } = storyData.data();
-      const currentTime = getCurrentTime();
-     let newCurrentRound = timeInformation.currentRound;
-      // iterate through the roundend list, comparing currentround and currenttime to each round end time
-       console.log("Hi")
-      timeInformation.roundEnd.forEach((roundEnd, index) => {
-        if (timeInformation.currentRound < index + 1 && compareTime(currentTime, roundEnd)) { // if our current time is greater than this time, and our current round is less than this round
-          newCurrentRound = index + 1;
-        }
-      changeCurrentRound(newCurrentRound);
+      changeTimeObject(timeInformation);
       changeTotalRounds(timeInformation.totalRounds);
-      });
-      const updatedTimeInformation = {
-        roundEnd: timeInformation.roundEnd,
-        currentRound: newCurrentRound,
-        totalRounds: timeInformation.totalRounds,
-        timeInterval: timeInformation.timeInterval
-      }
-      db.collection('stories').doc(title).update({
-        timeInformation: updatedTimeInformation
-      });
-    }
+    };
     fetchTimeData();
-    // return () => clearInterval(time);
   }, [fetchData]);
+
+  // this useeffect sets an interval that runs every second, fetching data from the database
+  useEffect(() => { 
+    const time = setInterval(() => {
+      updateTimeInDatabase();
+    }, 1000);
+    setTimeout(() => changeLoading(false), 1750);
+    return () => clearInterval(time);
+  }, [timeObject]);
 
   return (
     <>
@@ -193,7 +206,19 @@ function Story(props) {
           <Alert.Heading>{alert}</Alert.Heading>
         </Alert>
       ) : null}
-      <StoryDisplay classes={classes} handleClick={handleClick} loading={loading} title={title} displayText={displayText} posts={posts} newPost={newPost} changeNewPost={changeNewPost} addToStory={addToStory} currentRound={currentRound} totalRounds={totalRounds}/>
+      <StoryDisplay
+        classes={classes}
+        handleClick={handleClick}
+        loading={loading}
+        title={title}
+        displayText={displayText}
+        posts={posts}
+        newPost={newPost}
+        changeNewPost={changeNewPost}
+        addToStory={addToStory}
+        currentRound={currentRound}
+        totalRounds={totalRounds}
+      />
     </>
   );
 }
