@@ -153,30 +153,38 @@ function Story(props) {
 
   //
   const updateTimeInDatabase = async () => {
-    console.log("checking time");
-    const currentTime = getCurrentTime();
-    let newCurrentRound = timeObject.currentRound;
-    // iterate through the roundend list, comparing currentround and currenttime to each round end time
-    timeObject.roundEnd.forEach((roundEnd, index) => {
-      if (
-        timeObject.currentRound < index + 1 &&
-        compareTime(currentTime, roundEnd)
-      ) {
-        // if our current time is greater than this time, and our current round is less than this round
-        newCurrentRound = index + 1;
-      }
-    });
+    if (timeObject.currentRound !== timeObject.totalRounds) {
+      console.log("checking time");
+       const currentTime = getCurrentTime();
+       let newCurrentRound = timeObject.currentRound;
+       let oldRound = newCurrentRound;
+       // iterate through the roundend list, comparing currentround and currenttime to each round end time
+       timeObject.roundEnd.forEach((roundEnd, index) => {
+         if (
+           timeObject.currentRound < index + 1 &&
+           compareTime(currentTime, roundEnd)
+         ) {
+           // if our current time is greater than this time, and our current round is less than this round
+           newCurrentRound = index + 1;
+         }
+       });
 
-    changeCurrentRound(newCurrentRound);
-    const updatedTimeInformation = {
-      roundEnd: timeObject.roundEnd,
-      currentRound: newCurrentRound,
-      totalRounds: timeObject.totalRounds,
-      timeInterval: timeObject.timeInterval,
-    };
-    await db.collection("stories").doc(title).update({
-      timeInformation: updatedTimeInformation,
-    });
+       changeCurrentRound(newCurrentRound);
+       // Rounds have changed, update time in database and add to story
+       if (newCurrentRound !== oldRound) {
+         addToStory();
+         console.log("setting database");
+         const updatedTimeInformation = {
+           roundEnd: timeObject.roundEnd,
+           currentRound: newCurrentRound,
+           totalRounds: timeObject.totalRounds,
+           timeInterval: timeObject.timeInterval,
+         };
+         await db.collection("stories").doc(title).update({
+           timeInformation: updatedTimeInformation,
+         });
+       }
+    }
   };
 
   // useEffect for setting the time object by getting time data from database
@@ -186,6 +194,7 @@ function Story(props) {
       let { timeInformation } = storyData.data();
       changeTimeObject(timeInformation);
       changeTotalRounds(timeInformation.totalRounds);
+      changeCurrentRound(timeInformation.currentRound);
     };
     fetchTimeData();
   }, [fetchData]);
