@@ -162,6 +162,7 @@ function Story(props) {
       const currentTime = getCurrentTime();
       let newCurrentRound = timeObject.currentRound;
       // iterate through the roundend list, comparing currentround and currenttime to each round end time
+
       timeObject.roundEnd.forEach((roundEnd, index) => {
         if (
           timeObject.currentRound < index + 1 &&
@@ -169,25 +170,43 @@ function Story(props) {
         ) {
           // if our current time is greater than this time, and our current round is less than this round
           newCurrentRound = index + 1;
-          console.log("in here");
         }
       });
 
-      changeSecondsLeft(timeObject.timeInterval + calculateTimeDifference(currentTime, timeObject.roundEnd[newCurrentRound - 1]));
+      changeSecondsLeft(
+        timeObject.timeInterval +
+          calculateTimeDifference(
+            currentTime,
+            timeObject.roundEnd[newCurrentRound - 1]
+          )
+      );
       changeCurrentRound(newCurrentRound);
-      // Rounds have changed, update time in database and add to story
-      await addToStory();
-      const updatedTimeInformation = {
-        roundEnd: timeObject.roundEnd,
-        currentRound: newCurrentRound,
-        totalRounds: timeObject.totalRounds,
-        timeInterval: timeObject.timeInterval,
-      };
-      await db.collection("stories").doc(title).update({
-        timeInformation: updatedTimeInformation,
-      });;
     }
   };
+
+  // After currentRound is changed, this use effect is triggered and updates the database
+  useEffect(() => {
+    const updateDatabase = async () => {
+      addToStory();
+        console.log(timeObject.currentRound);
+      console.log(timeObject.totalRounds);
+      if (timeObject.roundEnd) {
+        // Rounds have changed, update time in database and add to story
+        await addToStory();
+        const updatedTimeInformation = {
+          roundEnd: timeObject.roundEnd,
+          currentRound,
+          totalRounds: timeObject.totalRounds,
+          timeInterval: timeObject.timeInterval,
+        };
+        await db.collection("stories").doc(title).update({
+          timeInformation: updatedTimeInformation,
+        });
+      }
+    };
+
+    updateDatabase();
+  }, [currentRound]);
 
   // useEffect for setting the time object by getting time data from database
   useEffect(() => {
@@ -202,7 +221,7 @@ function Story(props) {
   }, [fetchData]);
 
   // this useeffect sets an interval that runs every second, fetching data from the database
-  useEffect(() => { 
+  useEffect(() => {
     const time = setInterval(() => {
       updateDatabase();
     }, 1000);
