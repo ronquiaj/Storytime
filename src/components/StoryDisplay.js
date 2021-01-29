@@ -32,35 +32,28 @@ export default function StoryDisplay(props) {
                 </h1>
                 <h1 className={classes.seconds}>Seconds left: {secondsLeft}</h1>
               </div>
-              <div className="box effect7">
-                <textarea
-                  disabled="yes"
-                  className={classes.text}
-                  value={displayText}
-                />
+              <div className='box effect7'>
+                <textarea disabled='yes' className={classes.text} value={displayText} />
               </div>
             </div>
 
             {gameOver ? (
-              <h1 className={classes.archive}>
-                This post will now be archived
-              </h1>
+              <h1 className={classes.archive}>This post will now be archived</h1>
             ) : (
               <>
-                {" "}
                 <ul className={classes.postContainer}>{posts}</ul>
                 <Form onSubmit={handleClick} className={classes.post}>
                   <Form.Group>
                     <Form.Label>New post</Form.Label>
                     <Form.Control
-                      maxLength="90"
+                      maxLength='90'
                       value={newPost}
                       onChange={changeNewPost}
-                      type="text"
+                      type='text'
                       required
                     />
                   </Form.Group>
-                  <Button className="w-100" type="submit">
+                  <Button className='w-100' type='submit'>
                     Post
                   </Button>
                 </Form>{" "}

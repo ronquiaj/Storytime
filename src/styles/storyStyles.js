@@ -3,12 +3,12 @@ const styles = {
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
-    alignItems: "center",
+    alignItems: "center"
   },
   title: {
     margin: "2rem 0",
     textAlign: "center",
-    fontWeight: 400,
+    fontWeight: 400
   },
   "@global": {
     ".effect7": {
@@ -16,14 +16,11 @@ const styles = {
       width: "100vh",
       height: "20rem",
       position: "relative",
-      webkitBoxShadow:
-        "0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset",
-      mozBoxShadow:
-        "0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset",
-      boxShadow:
-        "0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset",
-      padding: "1rem",
-    },
+      webkitBoxShadow: "0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset",
+      mozBoxShadow: "0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset",
+      boxShadow: "0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset",
+      padding: "1rem"
+    }
   },
   text: {
     width: "100%",
@@ -33,45 +30,43 @@ const styles = {
     resize: "none",
     color: "black",
     fontWeight: 100,
-    fontSize: "1.105rem",
+    fontSize: "1.105rem"
   },
   post: {
-    margin: "2.5rem 0",
+    margin: "2.5rem 0"
   },
   postContainer: {
     display: "flex",
     width: "100%",
     flexDirection: "column",
+    marginTop: "1.5rem"
   },
   roundContainer: {
     padding: 0,
     marginBottom: "2rem",
     width: "50vh",
     margin: "0 auto",
-    webkitBoxShadow:
-      "0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset",
-    mozBoxShadow:
-      "0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset",
-    boxShadow:
-      "0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset",
+    webkitBoxShadow: "0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset",
+    mozBoxShadow: "0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset",
+    boxShadow: "0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset"
   },
   rounds: {
-    textAlign: "center",
+    textAlign: "center"
   },
   seconds: {
-    textAlign: "center",
+    textAlign: "center"
   },
   archive: {
-    marginTop: "3rem",
+    marginTop: "3rem"
   },
   "@media (max-width: 748px)": {
     "@global": {
       ".effect7": {
         display: "flex",
-        width: "48vh",
-      },
-    },
-  },
+        width: "48vh"
+      }
+    }
+  }
 };
 
 export default styles;
