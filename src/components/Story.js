@@ -6,7 +6,6 @@ import { useHistory } from 'react-router-dom';
 import { withStyles } from '@material-ui/core';
 import { db } from '../firebase/Firebase';
 import { AuthenticatedContext } from '../contexts/AuthenticatedContext';
-import { UpdatedUserContext } from "../contexts/UpdatedUserContext";
 import useForm from '../hooks/useForm';
 import Post from './Post';
 import styles from '../styles/storyStyles.js';
@@ -18,30 +17,22 @@ function Story(props) {
   const { title } = props.match.params;
   const { classes } = props;
   const { user } = useContext(AuthenticatedContext);
-  const { updated } = useContext(UpdatedUserContext);
   const [loading, changeLoading] = useState(true);
   const [displayText, changeText] = useState("");
-  const [posts, changePosts] = useState([]);
-  const [postAdded, changePostAdded] = useState(false);
+  const [displayPosts, changeDisplayPosts] = useState([]);
   const [newPost, changeNewPost] = useForm("");
   const [alert, changeAlert] = useState("");
-  const [voted, changedVoted] = useState(false);
   const [currentRound, changeCurrentRound] = useState(1);
   const [totalRounds, changeTotalRounds] = useState(10);
   const [timeObject, changeTimeObject] = useState({});
   const [secondsLeft, changeSecondsLeft] = useState(0);
-
-  const toggleVotes = () => {
-    changedVoted(true);
-    changedVoted(false);
-  };
 
   // Method that looks at all of the posts, gets the highest voted post and adds it to the existing story text. The posts are all deleted afterwards
   const addToStory = async () => {
     const storyRef = db.collection("stories").doc(title);
     const storyData = await storyRef.get();
     let winner;
-    let highestVote = { votes: 0 }; // Represents the object to be returned
+    let highestVote = { votes: -9999 }; // Represents the object to be returned
     let tieVotes = []; // Represents an array that is pushed values that tie with the highest vote count, is rewritten when a new high vote is encountered
     // This loop will return an object representing the text to be added to the story, and the user who won
     const { posts } = storyData.data();
@@ -78,9 +69,10 @@ function Story(props) {
         },
         { merge: true }
       );
+      changeDisplayPosts([]);
       console.log("Post elimination successful");
     }
-  };
+  };;
 
   // Click handler for adding a new post to the story
   const handleClick = async (e) => {
@@ -104,7 +96,6 @@ function Story(props) {
           })
           .then(() => {
             console.log("Post successfully added!");
-            changePostAdded(true);
           })
           .catch((err) => console.log(err));
       } else {
@@ -116,7 +107,6 @@ function Story(props) {
   // Check to see if there is already a post with the username, returns false if there is no post made by the user yet
   const checkPosted = async () => {
     const storyRef = await db.collection("stories").doc(title).get();
-
     return storyRef
       .data()
       .posts.some((post) => post.owner.username === user.displayName);
@@ -129,33 +119,26 @@ function Story(props) {
     return storyData;
   }, [title]);
 
-  // Useeffect for fetching story and post data
-  useEffect(() => {
-    const fetchStoryData = async () => {
-      const storyData = await fetchData();
-      if (storyData.exists) {
-        const { posts, text } = storyData.data();
-        // Get all the posts from the database for this particular story
-        if (posts.length > 0) {
-          const newPosts = posts.map((post) => (
-            <Post
-              changeAlert={changeAlert}
-              key={post.owner.username}
-              {...post}
-              title={title}
-              toggleVotes={toggleVotes}
-            />
-          ));
-          changePosts(newPosts);
-        }
-        changeText(text);
-        changePostAdded(false);
-      } else history.push("/error");
-    };
-    fetchStoryData();
-  }, [postAdded, voted, updated, fetchData, history, title]);
-
-  //
+   const fetchStoryData = async () => {
+     const storyData = await fetchData();
+     if (storyData.exists) {
+       const { posts, text } = storyData.data();
+       // Get all the posts from the database for this particular story
+       if (posts.length > 0) {
+         const newPosts = posts.map((post) => (
+           <Post
+             changeAlert={changeAlert}
+             key={post.owner.username}
+             {...post}
+             title={title}
+           />
+         ));
+         changeDisplayPosts(newPosts);
+       }
+       changeText(text);
+     } else history.push("/error");
+   };
+   
   const updateDatabase = async () => {
     if (timeObject.currentRound !== timeObject.totalRounds) {
       console.log("checking time");
@@ -187,9 +170,6 @@ function Story(props) {
   // After currentRound is changed, this use effect is triggered and updates the database
   useEffect(() => {
     const updateDatabase = async () => {
-      addToStory();
-        console.log(timeObject.currentRound);
-      console.log(timeObject.totalRounds);
       if (timeObject.roundEnd) {
         // Rounds have changed, update time in database and add to story
         await addToStory();
@@ -224,6 +204,7 @@ function Story(props) {
   useEffect(() => {
     const time = setInterval(() => {
       updateDatabase();
+      fetchStoryData();
     }, 1000);
     setTimeout(() => changeLoading(false), 1750);
     return () => clearInterval(time);
@@ -243,7 +224,7 @@ function Story(props) {
         loading={loading}
         title={title}
         displayText={displayText}
-        posts={posts}
+        posts={displayPosts}
         newPost={newPost}
         changeNewPost={changeNewPost}
         addToStory={addToStory}
