@@ -29,20 +29,20 @@ function EditUser(props) {
     };
 
     useEffect(() => {
-        const fetchData = async () => {
-            const userData = await db.collection('users').doc(pageUser).get();
-            const { displayName, photoURL, bio } = userData.data();
-            changeDisplayImageRef(() => photoURL);
-            changeDisplayNameRef(() => displayName);
-            initialBioRef(() => bio);
-            if (!user || user.displayName !== displayName) {
-                history.push('/error');
-            } else {
-                changePageLoaded(true);
-            }
-            } 
-        fetchData();
-    }, [user, history, pageUser, initialBioRef]);
+      const fetchData = async () => {
+        const userData = await db.collection("users").doc(pageUser).get();
+        const { displayName, photoURL, bio } = userData.data();
+        changeDisplayImageRef(photoURL);
+        changeDisplayNameRef(displayName);
+        initialBioRef(bio);
+        if (!user || user.displayName !== displayName) {
+          history.push("/error");
+        } else {
+          changePageLoaded(true);
+        }
+      };
+      fetchData();
+    }, []);
 
     const handleSubmit = (e) => {
       e.preventDefault();

@@ -1,5 +1,5 @@
 import "firebase/firestore";
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { withStyles } from '@material-ui/core';
 import { useHistory } from "react-router-dom";
 import { db } from "../firebase/Firebase";
@@ -8,10 +8,9 @@ import styles from '../styles/postStyles';
 import PostDisplay from './PostDisplay';
 
 function Post(props) {
-    const { classes, text, title, changeAlert } = props;
+    const { classes, text, title, changeAlert, votes } = props;
     const { photoURL, username } = props.owner;
     const { user } = useContext(AuthenticatedContext);
-    const [votes, changeVotes] = useState(0);
     const history = useHistory();
 
     // Function to handle a user that has already voted, returns an object with voted and addToVote values
@@ -80,14 +79,12 @@ function Post(props) {
                     voters: postWithUpdatedUserVotes, // Returns the updated voters array
                     votes: addToVote.addToVote + post.votes, // Returns the updated votes
                   });
-                  changeVotes(addToVote.addToVote + post.votes);
                 } else {
                      updatedPosts.push({
-                    ...votePost, // Returns the existing information of the post being voted on, such as text
-                    voters: [...post.voters, newVoter], // Returns the updated voters array
-                    votes: newVoter.voted + post.votes // Returns the updated votes
-                });
-                     changeVotes(newVoter.voted + post.votes);
+                       ...votePost, // Returns the existing information of the post being voted on, such as text
+                       voters: [...post.voters, newVoter], // Returns the updated voters array
+                       votes: newVoter.voted + post.votes, // Returns the updated votes
+                     });
                 }
               } else updatedPosts.push(post);
               
