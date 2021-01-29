@@ -26,6 +26,8 @@ function Story(props) {
   const [totalRounds, changeTotalRounds] = useState(10);
   const [timeObject, changeTimeObject] = useState({});
   const [secondsLeft, changeSecondsLeft] = useState(0);
+  const [intervalID, changeIntervalID] = useState();
+  const [gameOver, changeGameOver] = useState(false);
 
   // Method that looks at all of the posts, gets the highest voted post and adds it to the existing story text. The posts are all deleted afterwards
   const addToStory = useCallback(async () => {
@@ -120,27 +122,27 @@ function Story(props) {
     return storyData;
   }, [title]);
 
-   const fetchStoryData = useCallback(async () => {
-     const storyData = await fetchData();
-     if (storyData.exists) {
-       const { posts, text } = storyData.data();
-       // Get all the posts from the database for this particular story
-       if (posts.length > 0) {
-         const newPosts = posts.map((post) => (
-           <Post
-             changeAlert={changeAlert}
-             key={post.owner.username}
-             {...post}
-             title={title}
-           />
-         ));
-         changeDisplayPosts(newPosts);
-       }
-       changeText(text);
-     } else history.push("/error");
-   }, [fetchData, history, title]);
-   
-   // Used to iterate through roundsend object and calculate the time
+  const fetchStoryData = useCallback(async () => {
+    const storyData = await fetchData();
+    if (storyData.exists) {
+      const { posts, text } = storyData.data();
+      // Get all the posts from the database for this particular story
+      if (posts.length > 0) {
+        const newPosts = posts.map((post) => (
+          <Post
+            changeAlert={changeAlert}
+            key={post.owner.username}
+            {...post}
+            title={title}
+          />
+        ));
+        changeDisplayPosts(newPosts);
+      }
+      changeText(text);
+    } else history.push("/error");
+  }, [fetchData, history, title]);
+
+  // Used to iterate through roundsend object and calculate the time
   const updateTimeInDatabase = useCallback(async () => {
     if (timeObject.currentRound !== timeObject.totalRounds) {
       console.log("checking time");
@@ -188,7 +190,14 @@ function Story(props) {
   // After currentRound is changed, this use effect is triggered and updates the database
   useEffect(() => {
     updateDatabase();
-  }, [currentRound, updateDatabase]);
+    // This if statement is used when we are at the last round
+    if (currentRound === totalRounds) {
+      setTimeout(() => {
+        clearInterval(intervalID);
+        changeGameOver(true);
+      }, timeObject.timeInterval * 1000);
+    }
+  }, [currentRound, updateDatabase, intervalID]);
 
   // useEffect for setting the time object by getting time data from database
   useEffect(() => {
@@ -208,6 +217,7 @@ function Story(props) {
       updateTimeInDatabase();
       fetchStoryData();
     }, 1000);
+    changeIntervalID(time);
     setTimeout(() => changeLoading(false), 1750);
     return () => clearInterval(time);
   }, [timeObject, updateTimeInDatabase, fetchStoryData]);
@@ -232,6 +242,7 @@ function Story(props) {
         addToStory={addToStory}
         currentRound={currentRound}
         totalRounds={totalRounds}
+        gameOver={gameOver}
       />
     </>
   );

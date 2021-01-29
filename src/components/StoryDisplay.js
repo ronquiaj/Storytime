@@ -13,10 +13,10 @@ export default function StoryDisplay(props) {
       posts,
       newPost,
       changeNewPost,
-      addToStory,
       currentRound,
       totalRounds,
       secondsLeft,
+      gameOver,
     } = props;
     return (
       <Container className={classes.container}>
@@ -26,10 +26,12 @@ export default function StoryDisplay(props) {
           <>
             <div>
               <h1 className={classes.title}>{title}</h1>
-              <h1>
-                Round: {currentRound}/{totalRounds}
-              </h1>
-              <h1>Seconds left: {secondsLeft}</h1>
+              <div className={classes.roundContainer}>
+                <h1 className={classes.rounds}>
+                  Round: {currentRound}/{totalRounds}
+                </h1>
+                <h1 className={classes.seconds}>Seconds left: {secondsLeft}</h1>
+              </div>
               <div className="box effect7">
                 <textarea
                   disabled="yes"
@@ -39,23 +41,31 @@ export default function StoryDisplay(props) {
               </div>
             </div>
 
-            <ul className={classes.postContainer}>{posts}</ul>
-            <Form onSubmit={handleClick} className={classes.post}>
-              <Form.Group>
-                <Form.Label>New post</Form.Label>
-                <Form.Control
-                  maxLength="90"
-                  value={newPost}
-                  onChange={changeNewPost}
-                  type="text"
-                  required
-                />
-              </Form.Group>
-              <Button className="w-100" type="submit">
-                Post
-              </Button>
-            </Form>
-            <Button onClick={addToStory}>Click Me</Button>
+            {gameOver ? (
+              <h1 className={classes.archive}>
+                This post will now be archived
+              </h1>
+            ) : (
+              <>
+                {" "}
+                <ul className={classes.postContainer}>{posts}</ul>
+                <Form onSubmit={handleClick} className={classes.post}>
+                  <Form.Group>
+                    <Form.Label>New post</Form.Label>
+                    <Form.Control
+                      maxLength="90"
+                      value={newPost}
+                      onChange={changeNewPost}
+                      type="text"
+                      required
+                    />
+                  </Form.Group>
+                  <Button className="w-100" type="submit">
+                    Post
+                  </Button>
+                </Form>{" "}
+              </>
+            )}
           </>
         )}
       </Container>

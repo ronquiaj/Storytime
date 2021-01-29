@@ -7,9 +7,9 @@ export default function useForm(inputVal) {
         changeVal(e.target.value);
     }
 
-    const setValNoE = input => {
-        changeVal(input);
-    }
+    const reset = () => {
+      changeVal("");
+    };
 
-    return [val, setVal, setValNoE];
+    return [val, setVal, reset];
 }

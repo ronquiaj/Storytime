@@ -11,6 +11,10 @@ const styles = {
   titleLink: {
     color: "white",
   },
+  addButton: {
+    display: "flex",
+    margin: "0 auto",
+  },
 };
 
 export default styles;

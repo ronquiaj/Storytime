@@ -10,11 +10,10 @@ import Story from './Story';
 import User from './User';
 import EditUser from './EditUser';
 
-
 function App() {
   
   return (
-    <div>
+    <div style={{ fontFamily: "Work Sans, sans-serif", fontWeight: 100 }}>
       <AuthenticatedProvider>
         <UpdatedUserProvider>
           <AppNav />
