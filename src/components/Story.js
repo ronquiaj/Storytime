@@ -20,7 +20,7 @@ function Story(props) {
   const [loading, changeLoading] = useState(true);
   const [displayText, changeText] = useState("");
   const [displayPosts, changeDisplayPosts] = useState([]);
-  const [newPost, changeNewPost] = useForm("");
+  const [newPost, changeNewPost, reset] = useForm("");
   const [alert, changeAlert] = useState("");
   const [currentRound, changeCurrentRound] = useState(1);
   const [totalRounds, changeTotalRounds] = useState(10);
@@ -28,7 +28,7 @@ function Story(props) {
   const [secondsLeft, changeSecondsLeft] = useState(0);
 
   // Method that looks at all of the posts, gets the highest voted post and adds it to the existing story text. The posts are all deleted afterwards
-  const addToStory = async () => {
+  const addToStory = useCallback(async () => {
     const storyRef = db.collection("stories").doc(title);
     const storyData = await storyRef.get();
     let winner;
@@ -72,7 +72,7 @@ function Story(props) {
       changeDisplayPosts([]);
       console.log("Post elimination successful");
     }
-  };;
+  }, [title]);
 
   // Click handler for adding a new post to the story
   const handleClick = async (e) => {
@@ -95,6 +95,7 @@ function Story(props) {
             posts: firebase.firestore.FieldValue.arrayUnion(post), // Appending a new post to the story
           })
           .then(() => {
+            reset();
             console.log("Post successfully added!");
           })
           .catch((err) => console.log(err));
@@ -119,7 +120,7 @@ function Story(props) {
     return storyData;
   }, [title]);
 
-   const fetchStoryData = async () => {
+   const fetchStoryData = useCallback(async () => {
      const storyData = await fetchData();
      if (storyData.exists) {
        const { posts, text } = storyData.data();
@@ -137,9 +138,10 @@ function Story(props) {
        }
        changeText(text);
      } else history.push("/error");
-   };
+   }, [fetchData, history, title]);
    
-  const updateDatabase = async () => {
+   // Used to iterate through roundsend object and calculate the time
+  const updateTimeInDatabase = useCallback(async () => {
     if (timeObject.currentRound !== timeObject.totalRounds) {
       console.log("checking time");
       const currentTime = getCurrentTime();
@@ -165,28 +167,28 @@ function Story(props) {
       );
       changeCurrentRound(newCurrentRound);
     }
-  };
+  }, [timeObject]);
+
+  const updateDatabase = useCallback(async () => {
+    if (timeObject.roundEnd) {
+      // Rounds have changed, update time in database and add to story
+      await addToStory();
+      const updatedTimeInformation = {
+        roundEnd: timeObject.roundEnd,
+        currentRound,
+        totalRounds: timeObject.totalRounds,
+        timeInterval: timeObject.timeInterval,
+      };
+      await db.collection("stories").doc(title).update({
+        timeInformation: updatedTimeInformation,
+      });
+    }
+  }, [addToStory, currentRound, timeObject, title]);
 
   // After currentRound is changed, this use effect is triggered and updates the database
   useEffect(() => {
-    const updateDatabase = async () => {
-      if (timeObject.roundEnd) {
-        // Rounds have changed, update time in database and add to story
-        await addToStory();
-        const updatedTimeInformation = {
-          roundEnd: timeObject.roundEnd,
-          currentRound,
-          totalRounds: timeObject.totalRounds,
-          timeInterval: timeObject.timeInterval,
-        };
-        await db.collection("stories").doc(title).update({
-          timeInformation: updatedTimeInformation,
-        });
-      }
-    };
-
     updateDatabase();
-  }, [currentRound]);
+  }, [currentRound, updateDatabase]);
 
   // useEffect for setting the time object by getting time data from database
   useEffect(() => {
@@ -203,12 +205,12 @@ function Story(props) {
   // this useeffect sets an interval that runs every second, fetching data from the database
   useEffect(() => {
     const time = setInterval(() => {
-      updateDatabase();
+      updateTimeInDatabase();
       fetchStoryData();
     }, 1000);
     setTimeout(() => changeLoading(false), 1750);
     return () => clearInterval(time);
-  }, [timeObject]);
+  }, [timeObject, updateTimeInDatabase, fetchStoryData]);
 
   return (
     <>

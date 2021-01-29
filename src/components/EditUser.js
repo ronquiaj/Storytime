@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, useCallback } from "react";
 import { db, storage } from '../firebase/Firebase';
 import { withStyles } from '@material-ui/core';
 import { Alert } from 'react-bootstrap';
@@ -28,21 +28,22 @@ function EditUser(props) {
         changeDisplayImageRef(URL.createObjectURL(image));
     };
 
+    const fetchData = useCallback(async () => {
+      const userData = await db.collection("users").doc(pageUser).get();
+      const { displayName, photoURL, bio } = userData.data();
+      changeDisplayImageRef(photoURL);
+      changeDisplayNameRef(displayName);
+      initialBioRef(bio);
+      if (!user || user.displayName !== displayName) {
+        history.push("/error");
+      } else {
+        changePageLoaded(true);
+      }
+    }, [history, initialBioRef, pageUser, user]);
+
     useEffect(() => {
-      const fetchData = async () => {
-        const userData = await db.collection("users").doc(pageUser).get();
-        const { displayName, photoURL, bio } = userData.data();
-        changeDisplayImageRef(photoURL);
-        changeDisplayNameRef(displayName);
-        initialBioRef(bio);
-        if (!user || user.displayName !== displayName) {
-          history.push("/error");
-        } else {
-          changePageLoaded(true);
-        }
-      };
       fetchData();
-    }, []);
+    }, [fetchData]);
 
     const handleSubmit = (e) => {
       e.preventDefault();
