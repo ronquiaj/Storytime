@@ -1,15 +1,15 @@
-import firebase from 'firebase/app';
-import 'firebase/firestore';
-import { useEffect, useState, useContext, useCallback } from 'react';
-import { Alert } from 'react-bootstrap';
-import { useHistory } from 'react-router-dom';
-import { withStyles } from '@material-ui/core';
-import { db } from '../firebase/Firebase';
-import { AuthenticatedContext } from '../contexts/AuthenticatedContext';
-import useForm from '../hooks/useForm';
-import Post from './Post';
-import styles from '../styles/storyStyles.js';
-import StoryDisplay from './StoryDisplay';
+import firebase from "firebase/app";
+import "firebase/firestore";
+import { useEffect, useState, useContext, useCallback } from "react";
+import { Alert } from "react-bootstrap";
+import { useHistory } from "react-router-dom";
+import { withStyles } from "@material-ui/core";
+import { db } from "../firebase/Firebase";
+import { AuthenticatedContext } from "../contexts/AuthenticatedContext";
+import useForm from "../hooks/useForm";
+import Post from "./Post";
+import styles from "../styles/storyStyles.js";
+import StoryDisplay from "./StoryDisplay";
 import { compareTime, getCurrentTime, calculateTimeDifference } from "./timer";
 
 function Story(props) {
@@ -31,6 +31,7 @@ function Story(props) {
 
   // Method that looks at all of the posts, gets the highest voted post and adds it to the existing story text. The posts are all deleted afterwards
   const addToStory = useCallback(async () => {
+    console.log("in here");
     const storyRef = db.collection("stories").doc(title);
     const storyData = await storyRef.get();
     let winner;
@@ -59,7 +60,7 @@ function Story(props) {
       storyRef.set({
         text: updatedText,
         posts: [],
-        title: title,
+        title: title
       });
 
       const userRef = db.collection("users").doc(winner.owner.username);
@@ -67,12 +68,11 @@ function Story(props) {
 
       userRef.set(
         {
-          winningPosts: userData.data().winningPosts + 1,
+          winningPosts: userData.data().winningPosts + 1
         },
         { merge: true }
       );
       changeDisplayPosts([]);
-      console.log("Post elimination successful");
     }
   }, [title]);
 
@@ -86,19 +86,18 @@ function Story(props) {
         const post = {
           owner: {
             photoURL: user.photoURL,
-            username: user.displayName,
+            username: user.displayName
           },
           text: newPost,
           votes: 0,
-          voters: [],
+          voters: []
         };
         await storyRef
           .update({
-            posts: firebase.firestore.FieldValue.arrayUnion(post), // Appending a new post to the story
+            posts: firebase.firestore.FieldValue.arrayUnion(post) // Appending a new post to the story
           })
           .then(() => {
             reset();
-            console.log("Post successfully added!");
           })
           .catch((err) => console.log(err));
       } else {
@@ -110,9 +109,7 @@ function Story(props) {
   // Check to see if there is already a post with the username, returns false if there is no post made by the user yet
   const checkPosted = async () => {
     const storyRef = await db.collection("stories").doc(title).get();
-    return storyRef
-      .data()
-      .posts.some((post) => post.owner.username === user.displayName);
+    return storyRef.data().posts.some((post) => post.owner.username === user.displayName);
   };
 
   // Method to get story data from the database
@@ -129,12 +126,7 @@ function Story(props) {
       // Get all the posts from the database for this particular story
       if (posts.length > 0) {
         const newPosts = posts.map((post) => (
-          <Post
-            changeAlert={changeAlert}
-            key={post.owner.username}
-            {...post}
-            title={title}
-          />
+          <Post changeAlert={changeAlert} key={post.owner.username} {...post} title={title} />
         ));
         changeDisplayPosts(newPosts);
       }
@@ -144,17 +136,13 @@ function Story(props) {
 
   // Used to iterate through roundsend object and calculate the time
   const updateTimeInDatabase = useCallback(async () => {
-    if (timeObject.currentRound !== timeObject.totalRounds) {
-      console.log("checking time");
+    if (!gameOver) {
       const currentTime = getCurrentTime();
       let newCurrentRound = timeObject.currentRound;
       // iterate through the roundend list, comparing currentround and currenttime to each round end time
 
       timeObject.roundEnd.forEach((roundEnd, index) => {
-        if (
-          timeObject.currentRound < index + 1 &&
-          compareTime(currentTime, roundEnd)
-        ) {
+        if (timeObject.currentRound < index + 1 && compareTime(currentTime, roundEnd)) {
           // if our current time is greater than this time, and our current round is less than this round
           newCurrentRound = index + 1;
         }
@@ -162,14 +150,11 @@ function Story(props) {
 
       changeSecondsLeft(
         timeObject.timeInterval +
-          calculateTimeDifference(
-            currentTime,
-            timeObject.roundEnd[newCurrentRound - 1]
-          )
+          calculateTimeDifference(currentTime, timeObject.roundEnd[newCurrentRound - 1])
       );
       changeCurrentRound(newCurrentRound);
     }
-  }, [timeObject]);
+  }, [timeObject, gameOver]);
 
   const updateDatabase = useCallback(async () => {
     if (timeObject.roundEnd) {
@@ -179,25 +164,42 @@ function Story(props) {
         roundEnd: timeObject.roundEnd,
         currentRound,
         totalRounds: timeObject.totalRounds,
-        timeInterval: timeObject.timeInterval,
+        timeInterval: timeObject.timeInterval
       };
       await db.collection("stories").doc(title).update({
-        timeInformation: updatedTimeInformation,
+        timeInformation: updatedTimeInformation
       });
     }
   }, [addToStory, currentRound, timeObject, title]);
+
+  // Method that deletes this story and adds its contents to the archive page
+  const archivePosts = useCallback(async () => {
+    const newArchivedStory = {
+      dateCreated: getCurrentTime(),
+      title,
+      text: displayText
+    };
+    db.collection("archive").doc(title).set(newArchivedStory);
+    db.collection("stories")
+      .doc(title)
+      .delete()
+      .then(() => {
+        history.push(`/archive/${title}`);
+      });
+  }, [displayText, history, title]);
 
   // After currentRound is changed, this use effect is triggered and updates the database
   useEffect(() => {
     updateDatabase();
     // This if statement is used when we are at the last round
-    if (currentRound === totalRounds) {
-      setTimeout(() => {
+    if (currentRound === timeObject.totalRounds) {
+      setTimeout(async () => {
         clearInterval(intervalID);
         changeGameOver(true);
+        archivePosts();
       }, timeObject.timeInterval * 1000);
     }
-  }, [currentRound, updateDatabase, intervalID]);
+  }, [currentRound, updateDatabase, intervalID, timeObject, archivePosts]);
 
   // useEffect for setting the time object by getting time data from database
   useEffect(() => {
@@ -213,19 +215,21 @@ function Story(props) {
 
   // this useeffect sets an interval that runs every second, fetching data from the database
   useEffect(() => {
-    const time = setInterval(() => {
-      updateTimeInDatabase();
-      fetchStoryData();
-    }, 1000);
-    changeIntervalID(time);
+    if (timeObject.totalRounds !== timeObject.currentRound) {
+      const time = setInterval(async () => {
+        await updateTimeInDatabase();
+        await fetchStoryData();
+      }, 1000);
+      changeIntervalID(time);
+      return () => clearInterval(time);
+    }
     setTimeout(() => changeLoading(false), 1750);
-    return () => clearInterval(time);
   }, [timeObject, updateTimeInDatabase, fetchStoryData]);
 
   return (
     <>
       {alert ? (
-        <Alert onClick={() => changeAlert("")} variant="danger">
+        <Alert onClick={() => changeAlert("")} variant='danger'>
           <Alert.Heading>{alert}</Alert.Heading>
         </Alert>
       ) : null}
@@ -239,7 +243,6 @@ function Story(props) {
         posts={displayPosts}
         newPost={newPost}
         changeNewPost={changeNewPost}
-        addToStory={addToStory}
         currentRound={currentRound}
         totalRounds={totalRounds}
         gameOver={gameOver}
