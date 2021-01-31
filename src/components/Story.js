@@ -203,9 +203,9 @@ function Story(props) {
         setTimeout(async () => await archivePosts(), 3000);
       }, timeObject.timeInterval * 1000);
     }
-  }, [currentRound, updateDatabase, intervalID, timeObject, archivePosts]);
+  }, [currentRound]);
 
-  // useEffect for setting the time object by getting time data from database
+  // useEffect for setting the time object by getting time data from database, this useeffect runs first
   useEffect(() => {
     const fetchTimeData = async () => {
       const storyData = await fetchData();
