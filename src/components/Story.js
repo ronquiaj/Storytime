@@ -193,10 +193,10 @@ function Story(props) {
     updateDatabase();
     // This if statement is used when we are at the last round
     if (currentRound === timeObject.totalRounds) {
-      setTimeout(async () => {
+      setTimeout(() => {
         clearInterval(intervalID);
         changeGameOver(true);
-        archivePosts();
+        setTimeout(async () => await archivePosts(), 3000);
       }, timeObject.timeInterval * 1000);
     }
   }, [currentRound, updateDatabase, intervalID, timeObject, archivePosts]);

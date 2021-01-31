@@ -1,15 +1,19 @@
-import { useState } from 'react';
+import { useState } from "react";
 
 export default function useForm(inputVal) {
-    const [val, changeVal] = useState(inputVal);
+  const [val, changeVal] = useState(inputVal);
 
-    const setVal = e => {
-        changeVal(e.target.value);
-    }
+  const setVal = (e) => {
+    changeVal(e.target.value);
+  };
 
-    const reset = () => {
-      changeVal("");
-    };
+  const reset = () => {
+    changeVal("");
+  };
 
-    return [val, setVal, reset];
+  const initialBioRef = (input) => {
+    changeVal(input);
+  };
+
+  return [val, setVal, reset, initialBioRef];
 }

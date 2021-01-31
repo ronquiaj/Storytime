@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { db } from "../firebase/Firebase";
+import { Link } from 'react-router-dom';
 
 export default function ArchivedStories() {
   const [archivedPosts, setArchivedPosts] = useState([]);
@@ -9,7 +10,7 @@ export default function ArchivedStories() {
     const archiveRef = db.collection("archive");
     const archiveData = await archiveRef.get();
     const archive = [];
-    archiveData.forEach((story) => archive.push(story.data().title));
+    archiveData.forEach((story) => archive.push(<Link to={`/archive/${story.data().title}`}>{story.data().title}</Link>));
     setArchivedPosts(archive);
   }, []);
 
