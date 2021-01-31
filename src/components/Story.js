@@ -28,6 +28,7 @@ function Story(props) {
   const [secondsLeft, changeSecondsLeft] = useState(0);
   const [intervalID, changeIntervalID] = useState();
   const [gameOver, changeGameOver] = useState(false);
+  const [lastRound, changeLastRound] = useState(null);
 
   // Method that looks at all of the posts, gets the highest voted post and adds it to the existing story text. The posts are all deleted afterwards
   const addToStory = useCallback(async () => {
@@ -139,6 +140,7 @@ function Story(props) {
     if (!gameOver) {
       const currentTime = getCurrentTime();
       let newCurrentRound = timeObject.currentRound;
+      changeLastRound(newCurrentRound);
       // iterate through the roundend list, comparing currentround and currenttime to each round end time
 
       timeObject.roundEnd.forEach((roundEnd, index) => {
@@ -190,7 +192,9 @@ function Story(props) {
 
   // After currentRound is changed, this use effect is triggered and updates the database
   useEffect(() => {
-    updateDatabase();
+    if (lastRound) {
+      updateDatabase();
+    }
     // This if statement is used when we are at the last round
     if (currentRound === timeObject.totalRounds) {
       setTimeout(() => {
