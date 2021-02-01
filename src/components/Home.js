@@ -8,7 +8,8 @@ import { AuthenticatedContext } from "../contexts/AuthenticatedContext";
 import HomeForm from "./HomeForm";
 import MiniStory from "./MiniStory";
 import styles from "../styles/homeStyles";
-import { partitionRounds } from "./timer";
+import { partitionRounds } from "../functions/timer";
+import randomEmoji from '../functions/getEmoji';
 
 function Home(props) {
   const history = useHistory();
@@ -22,6 +23,7 @@ function Home(props) {
   const [storyAdded, changeStoryAdded] = useState(false);
   const [loading, changeLoading] = useState(true);
   const { user } = useContext(AuthenticatedContext);
+  const [chosenEmoji, changeChosenEmoji] = useState(randomEmoji);
 
   // Handler for when we add to story, checks our database to see if there is a story with that name already, and if there isn't adds to database
   const handleSubmit = async (e) => {
@@ -40,6 +42,7 @@ function Home(props) {
           title: titleRef,
           text: textRef,
           posts: [],
+          emoji: chosenEmoji,
           timeInformation
         });
         changeStoryAdded(true);
@@ -60,8 +63,8 @@ function Home(props) {
       // If the stories database has existing stories
       if (!storyData.empty) {
         storyData.forEach((story) => {
-          const { text, title } = story.data();
-          newStories.push(<MiniStory key={title} title={title} classes={classes} text={text} />);
+          const { text, title, emoji } = story.data();
+          newStories.push(<MiniStory key={title} title={title} classes={classes} text={text} emoji={emoji}/>);
         });
         changeStoryAdded(false);
         changeStories(newStories);
@@ -96,6 +99,8 @@ function Home(props) {
         changeTimeIntervalRef={changeTimeIntervalRef}
         roundsRef={roundsRef}
         changeRoundsRef={changeRoundsRef}
+        chosenEmoji={chosenEmoji}
+        changeChosenEmoji={changeChosenEmoji}
       />
     </>
   );

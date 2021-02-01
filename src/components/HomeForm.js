@@ -9,6 +9,7 @@ import Alert from "@material-ui/lab/Alert";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
 import Collapse from "@material-ui/core/Collapse";
+import Picker from 'emoji-picker-react';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction='up' ref={ref} {...props} />;
@@ -27,9 +28,12 @@ export default function HomeForm(props) {
     timeIntervalRef,
     changeTimeIntervalRef,
     roundsRef,
-    changeRoundsRef
+    changeRoundsRef,
+    chosenEmoji,
+    changeChosenEmoji
   } = props;
   const [open, setOpen] = useState(false);
+  const [openEmoji, changeOpenEmoji] = useState(false);
   const [alertMessage, changeAlertMessage] = useState("");
 
   const openOpen = () => {
@@ -49,6 +53,18 @@ export default function HomeForm(props) {
     }
   };
 
+  const closeEmoji = () => {
+    changeOpenEmoji(false);
+  }
+
+  const triggerEmoji = () => {
+    changeOpenEmoji(true);
+  }
+
+  const onEmojiClick = (event, emojiObject) => {
+    changeChosenEmoji(emojiObject.emoji);
+  };
+
   return (
     <>
       <Dialog
@@ -59,8 +75,8 @@ export default function HomeForm(props) {
         fullWidth
         aria-labelledby='alert-dialog-slide-title'
         aria-describedby='alert-dialog-slide-description'>
-        <DialogTitle>{"Add new story"}</DialogTitle>
-        <Card>
+        <DialogTitle className={classes.dialog}>{"Add new story"}</DialogTitle>
+        <Card >
           <Card.Body>
             <Form onSubmit={handleSubmit}>
               <Form.Group>
@@ -91,12 +107,16 @@ export default function HomeForm(props) {
                 max={20}
                 step={1}
               />
-              <Row>
-                <Col xl={5} lg={2}>
-                  <Button type='submit' onClick={validate}>
+              <Row className={classes.formSubmit}>
+                <Col>
+                  <Button type='submit' onClick={validate} className={classes.submitButton}>
                     Add story
                   </Button>
                 </Col>
+                <Col className={classes.emoji}>
+                  <div onClick={triggerEmoji}><span className={classes.emojiText}>Selected emoji: </span>{chosenEmoji}</div>
+                </Col>
+              </Row>
                 <Collapse in={alertMessage}>
                   <Col>
                     <Alert
@@ -111,8 +131,24 @@ export default function HomeForm(props) {
                     </Alert>
                   </Col>
                 </Collapse>
-              </Row>
+             
             </Form>
+          </Card.Body>
+        </Card>
+      </Dialog>
+
+      <Dialog
+        open={openEmoji}
+        TransitionComponent={Transition}
+        keepMounted
+        onClose={closeEmoji}
+        aria-labelledby='alert-dialog-slide-title'
+        aria-describedby='alert-dialog-slide-description'>
+
+        <DialogTitle className={classes.emojiDialog}>{"Choose an emoji!"}</DialogTitle>
+        <Card >
+          <Card.Body>
+            <Picker onEmojiClick={onEmojiClick}/>
           </Card.Body>
         </Card>
       </Dialog>
@@ -120,7 +156,7 @@ export default function HomeForm(props) {
       <Container className={classes.container} fluid>
         <Row>{loading ? <Spinner /> : stories}</Row>
       </Container>
-
+                      
       <Button onClick={openOpen} className={classes.addButton}>
         Add new story
       </Button>

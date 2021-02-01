@@ -10,7 +10,7 @@ import useForm from "../hooks/useForm";
 import Post from "./Post";
 import styles from "../styles/storyStyles.js";
 import StoryDisplay from "./StoryDisplay";
-import { compareTime, getCurrentTime, calculateTimeDifference } from "./timer";
+import { compareTime, getCurrentTime, calculateTimeDifference } from "../functions/timer";
 
 function Story(props) {
   const history = useHistory();
@@ -29,6 +29,7 @@ function Story(props) {
   const [intervalID, changeIntervalID] = useState();
   const [gameOver, changeGameOver] = useState(false);
   const [lastRound, changeLastRound] = useState(null);
+  const [storyEmoji, changeStoryEmoji] = useState(null);
 
   // Method that looks at all of the posts, gets the highest voted post and adds it to the existing story text. The posts are all deleted afterwards
   const addToStory = useCallback(async () => {
@@ -123,11 +124,14 @@ function Story(props) {
   const fetchStoryData = useCallback(async () => {
     const storyData = await fetchData();
     if (storyData.exists) {
-      const { posts, text } = storyData.data();
+      const { posts, text, emoji } = storyData.data();
+      if (!storyEmoji) {
+        changeStoryEmoji(emoji);
+      }
       // Get all the posts from the database for this particular story
       if (posts.length > 0) {
         const newPosts = posts.map((post) => (
-          <Post changeAlert={changeAlert} key={post.owner.username} {...post} title={title} />
+          <Post changeAlert={changeAlert} key={post.owner.username} {...post} title={title} emoji={emoji}/>
         ));
         changeDisplayPosts(newPosts);
       }
@@ -179,7 +183,8 @@ function Story(props) {
     const newArchivedStory = {
       dateCreated: getCurrentTime(),
       title,
-      text: displayText
+      text: displayText,
+      emoji: storyEmoji
     };
     db.collection("archive").doc(title).set(newArchivedStory);
     db.collection("stories")

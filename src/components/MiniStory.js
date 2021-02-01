@@ -1,9 +1,10 @@
 import React from 'react';
-import { Card, Button, Col } from 'react-bootstrap'; 
+import { Card, Button, Col, Row } from 'react-bootstrap'; 
 import { Link } from 'react-router-dom';
 
 export default function MiniStory(props) {
-    const { title, classes, text } = props;
+    const { title, classes, text, emoji, dateCreated } = props;
+    console.log(text);
     return (
         <Col key={title}>
               <Card className={classes.storyCard}>
@@ -12,7 +13,10 @@ export default function MiniStory(props) {
                 <Card.Text>
                   {text.length < 165 ? text : `${text.slice(0, 165)}...`}
                 </Card.Text>
-                <Button variant="primary"><Link className={classes.titleLink} to={`/stories/${title}`}>Visit this story</Link></Button>
+                <Row className={classes.submit}>
+                  <Col className={classes.visit}><Button variant="primary"><Link className={classes.titleLink} to={dateCreated ? `archive/${title}` : `/stories/${title}`}>Visit this story</Link></Button></Col>
+                  <Col className={classes.emoji}>{emoji}</Col>
+                </Row>
               </Card.Body>
               </Card>
           </Col>
