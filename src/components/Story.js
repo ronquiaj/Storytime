@@ -130,6 +130,7 @@ function Story(props) {
       }
       // Get all the posts from the database for this particular story
       if (posts.length > 0) {
+        
         const newPosts = posts.map((post) => (
           <Post changeAlert={changeAlert} key={post.owner.username} {...post} title={title} emoji={emoji}/>
         ));
@@ -203,9 +204,9 @@ function Story(props) {
     // This if statement is used when we are at the last round
     if (currentRound === timeObject.totalRounds) {
       setTimeout(() => {
-        clearInterval(intervalID);
+        setTimeout(async () => await archivePosts(), 1000);
         changeGameOver(true);
-        setTimeout(async () => await archivePosts(), 3000);
+        clearInterval(intervalID);
       }, timeObject.timeInterval * 1000);
     }
   }, [currentRound]);
