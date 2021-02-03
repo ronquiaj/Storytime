@@ -52,7 +52,24 @@ const addToStory = async (title, text, postData, changePosts, setDisplayText) =>
       });
     changePosts([]);
     setDisplayText(updatedText);
+    return updatedText;
   }
 };
 
-export { checkPosted, fetchStoryData, addToStory };
+// Archives the story and deletes it, only accepts stories with characters with more than
+const archiveStory = async (title, text, emoji) => {
+  if (text.length >= 100) {
+    await db.collection("archive").doc(title).set({
+      dateCreated: new Date(),
+      emoji,
+      text,
+      title
+    });
+    db.collection("stories").doc(title).delete();
+    return true;
+  }
+  db.collection("stories").doc(title).delete();
+  return false;
+};
+
+export { checkPosted, fetchStoryData, addToStory, archiveStory };

@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect } from "react";
 import { withStyles } from "@material-ui/core";
 import { Container } from "react-bootstrap";
 import { db } from "../firebase/Firebase";
-import styles from '../styles/archivedStoryStyles';
+import styles from "../styles/archivedStoryStyles";
 
 function ArchivedStories(props) {
   const { classes } = props;
@@ -15,14 +15,13 @@ function ArchivedStories(props) {
     return archiveRef.data();
   }, [title]);
 
-
   useEffect(() => {
     const displayArchivedPost = async () => {
       const archiveData = await fetchArchive();
-      const {text} = archiveData;
+      const { text } = archiveData;
       console.log(text);
       changeArchiveText(text);
-    }
+    };
     displayArchivedPost();
   }, [fetchArchive]);
 

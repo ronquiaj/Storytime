@@ -35,6 +35,7 @@ export default function HomeForm(props) {
   const [open, setOpen] = useState(false);
   const [openEmoji, changeOpenEmoji] = useState(false);
   const [alertMessage, changeAlertMessage] = useState("");
+  const [alertShown, setAlert] = useState(false);
 
   const openOpen = () => {
     setOpen(true);
@@ -48,6 +49,7 @@ export default function HomeForm(props) {
   const validate = () => {
     if (!textRef || !titleRef) {
       changeAlertMessage("Fill in both the title input and the text input.");
+      setAlert(true);
     } else {
       close();
     }
@@ -120,13 +122,17 @@ export default function HomeForm(props) {
                   </div>
                 </Col>
               </Row>
-              <Collapse in={alertMessage}>
+              <Collapse in={alertShown}>
                 <Col>
                   <Alert
                     className={classes.alert}
                     severity='error'
                     action={
-                      <IconButton onClick={() => changeAlertMessage("")}>
+                      <IconButton
+                        onClick={() => {
+                          changeAlertMessage("");
+                          setAlert(false);
+                        }}>
                         <CloseIcon />
                       </IconButton>
                     }>

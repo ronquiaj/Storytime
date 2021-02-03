@@ -11,7 +11,7 @@ import Post from "./Post";
 import styles from "../styles/storyStyles.js";
 import StoryDisplay from "./StoryDisplay";
 import { compareTime, getCurrentTime, calculateTimeDifference } from "../functions/timer";
-import { fetchStoryData, checkPosted, addToStory } from "../functions/storyFunctions";
+import { fetchStoryData, checkPosted, addToStory, archiveStory } from "../functions/storyFunctions";
 
 function Story(props) {
   const history = useHistory();
@@ -28,6 +28,7 @@ function Story(props) {
   const [currentRound, changeCurrentRound] = useState();
   const [newCurrentRound, changeNewCurrentRound] = useState();
   const [checkAllChanged, setCheckAllChanged] = useState({ currentRound, timeObject, totalRounds });
+  const [storyEmoji, changeEmoji] = useState("😂");
   const [gameOver, changeGameOver] = useState(false);
   const [alert, changeAlert] = useState("");
 
@@ -54,7 +55,7 @@ function Story(props) {
           .then(() => {
             reset();
           })
-          .catch((err) => console.log(err));
+          .catch((err) => err);
       } else {
         changeAlert("You've already posted, wait for the time to run out.");
       }
@@ -114,19 +115,20 @@ function Story(props) {
         }, timeObject.timeInterval * 1000);
       }
     }
-  }, [newCurrentRound]);
+  }, [newCurrentRound]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // useEffect which gets the initial time information from the database, starts first
   useEffect(() => {
     const fetchInitialTimeInformation = async () => {
       const storyData = await fetchStoryData(title);
-      const { timeInformation } = storyData;
+      const { timeInformation, emoji } = storyData;
+      changeEmoji(emoji);
       changeTimeObject(timeInformation);
       changeCurrentRound(timeInformation.currentRound);
       changeTotalRounds(timeInformation.totalRounds);
     };
     fetchInitialTimeInformation();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // useEffect for making sure that dependencies are all changed at once
   useEffect(() => {
@@ -137,7 +139,7 @@ function Story(props) {
         ? { currentRound, timeObject, totalRounds }
         : prev; // do nothing
     });
-  }, [currentRound, totalRounds, timeObject]);
+  }, [currentRound, totalRounds, timeObject]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // In response to the above useeffect, sets up the time interval
   useEffect(() => {
@@ -158,13 +160,29 @@ function Story(props) {
       }
     }
     setTimeout(() => changeLoading(false), 1500);
-  }, [checkAllChanged, newCurrentRound]);
+  }, [checkAllChanged, newCurrentRound]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
+    const processGameOver = async () => {
+      const updatedText = await addToStory(
+        title,
+        displayText,
+        displayPosts,
+        changeDisplayPosts,
+        changeText
+      );
+      setTimeout(() => {
+        if (archiveStory(title, updatedText, storyEmoji)) {
+          history.push(`/archive/${title}`);
+        } else {
+          history.push("/");
+        }
+      }, 2500);
+    };
     if (gameOver) {
-      addToStory(title, displayText, displayPosts, changeDisplayPosts, changeText);
+      processGameOver();
     }
-  }, [gameOver]);
+  }, [gameOver]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>

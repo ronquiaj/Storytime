@@ -14,7 +14,7 @@ import ArchivedStory from "./ArchivedStory";
 
 function App() {
   return (
-    <div style={{ fontFamily: "Work Sans, sans-serif", fontWeight: 100, }}>
+    <div style={{ fontFamily: "Work Sans, sans-serif", fontWeight: 100 }}>
       <AuthenticatedProvider>
         <UpdatedUserProvider>
           <AppNav />
@@ -24,7 +24,11 @@ function App() {
             <Route exact path='/login' render={() => <Login />} />
             <Route exact path='/archive' render={() => <ArchivedStories />} />
             <Route exact path='/users/:user' render={(routeProps) => <User {...routeProps} />} />
-            <Route exact path='/archive/:title' render={(routeProps) => <ArchivedStory {...routeProps}/>} />
+            <Route
+              exact
+              path='/archive/:title'
+              render={(routeProps) => <ArchivedStory {...routeProps} />}
+            />
             <Route
               exact
               path='/users/:user/edit'
