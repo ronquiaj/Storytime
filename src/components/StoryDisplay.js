@@ -27,11 +27,18 @@ export default function StoryDisplay(props) {
           <div>
             <h1 className={classes.title}>{title}</h1>
             <div className={classes.roundContainer}>
-              <h1 className={classes.rounds}>
-                Round: {currentRound}/{totalRounds}
-              </h1>
-              <h1 className={classes.seconds}>Seconds left: {secondsLeft}</h1>
+              {gameOver ? (
+                <h1 className={classes.rounds}>Story is over</h1>
+              ) : (
+                <>
+                  <h1 className={classes.rounds}>
+                    Round: {currentRound}/{totalRounds}
+                  </h1>
+                  <h1 className={classes.seconds}>Seconds left: {secondsLeft}</h1>
+                </>
+              )}
             </div>
+
             <div className='box effect7'>
               <textarea disabled='yes' className={classes.text} value={displayText} />
             </div>
