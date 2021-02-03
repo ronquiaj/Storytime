@@ -3,11 +3,13 @@ import { withStyles } from "@material-ui/core";
 import { Container } from "react-bootstrap";
 import { db } from "../firebase/Firebase";
 import styles from "../styles/archivedStoryStyles";
+import Spinner from "./Spinner";
 
 function ArchivedStories(props) {
   const { classes } = props;
   const [archiveText, changeArchiveText] = useState("");
   const { title } = props.match.params;
+  const [loading, changeLoading] = useState(true);
 
   // fetches archive data
   const fetchArchive = useCallback(async () => {
@@ -19,20 +21,24 @@ function ArchivedStories(props) {
     const displayArchivedPost = async () => {
       const archiveData = await fetchArchive();
       const { text } = archiveData;
-      console.log(text);
       changeArchiveText(text);
     };
     displayArchivedPost();
+    setTimeout(() => changeLoading(false), 1000);
   }, [fetchArchive]);
 
   return (
     <Container className={classes.container}>
-      <div>
-        <h1 className={classes.title}>{title}</h1>
-        <div className='box effect7'>
-          <textarea disabled='yes' className={classes.text} value={archiveText} />
+      {loading ? (
+        <Spinner />
+      ) : (
+        <div>
+          <h1 className={classes.title}>{title}</h1>
+          <div className='box effect7'>
+            <textarea disabled='yes' className={classes.text} value={archiveText} />
+          </div>
         </div>
-      </div>
+      )}
     </Container>
   );
 }

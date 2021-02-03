@@ -121,9 +121,10 @@ function Story(props) {
   useEffect(() => {
     const fetchInitialTimeInformation = async () => {
       const storyData = await fetchStoryData(title);
-      const { timeInformation, emoji } = storyData;
+      const { timeInformation, emoji, text } = storyData;
       changeEmoji(emoji);
       changeTimeObject(timeInformation);
+      changeText(text);
       changeCurrentRound(timeInformation.currentRound);
       changeTotalRounds(timeInformation.totalRounds);
     };
@@ -153,14 +154,16 @@ function Story(props) {
         changeGameOver(true);
       } else {
         const interval = setInterval(() => {
-          updateStory();
-          updateTime();
+          if (!gameOver) {
+            updateStory();
+            updateTime();
+          }
         }, 1000);
         return () => clearInterval(interval);
       }
     }
     setTimeout(() => changeLoading(false), 1500);
-  }, [checkAllChanged, newCurrentRound]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [checkAllChanged, newCurrentRound, gameOver]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const processGameOver = async () => {
@@ -171,13 +174,13 @@ function Story(props) {
         changeDisplayPosts,
         changeText
       );
-      setTimeout(() => {
-        if (archiveStory(title, updatedText, storyEmoji)) {
+      setTimeout(async () => {
+        if (await archiveStory(title, updatedText, storyEmoji)) {
           history.push(`/archive/${title}`);
         } else {
           history.push("/");
         }
-      }, 2500);
+      }, 1750);
     };
     if (gameOver) {
       processGameOver();

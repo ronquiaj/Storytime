@@ -16,6 +16,7 @@ const fetchStoryData = async (title) => {
 // Takes in postdata (basically all the documents posts) from state, look at which has the highest vote, and then updates the text and resets the posts
 const addToStory = async (title, text, postData, changePosts, setDisplayText) => {
   const winner = { votes: -9999, text: "" };
+  let updatedText = text;
   if (postData.length > 2 || postData.length === 1) {
     for (let post of postData) {
       if (post.props.votes > winner.votes) {
@@ -27,19 +28,19 @@ const addToStory = async (title, text, postData, changePosts, setDisplayText) =>
   } else if (postData.length === 2) {
     if (postData[0].props.votes < postData[1].props.votes) {
       winner["text"] = postData[1].props.text;
-      winner["username"] = postData[1].props.owner.props.username;
+      winner["username"] = postData[1].props.owner.username;
     } else if (postData[1].props.votes < postData[0].props.votes) {
       winner["text"] = postData[0].props.text;
-      winner["username"] = postData[0].props.owner.props.username;
+      winner["username"] = postData[0].props.owner.username;
     } else {
       winner["text"] = postData[Math.floor(Math.random() * 2)].props.text;
+      winner["username"] = postData[Math.floor(Math.random() * 2)].props.owner.username;
     }
   }
 
   //If the text did change, meaning there was at least one post on the story
   if (winner.text) {
-    const updatedText = `${text + winner.text} `;
-    console.log(winner.text);
+    updatedText = `${text + winner.text} `;
     await db.collection("stories").doc(title).update({
       posts: [],
       text: updatedText
@@ -52,21 +53,23 @@ const addToStory = async (title, text, postData, changePosts, setDisplayText) =>
       });
     changePosts([]);
     setDisplayText(updatedText);
-    return updatedText;
   }
+  return updatedText;
 };
 
 // Archives the story and deletes it, only accepts stories with characters with more than
 const archiveStory = async (title, text, emoji) => {
-  if (text.length >= 100) {
-    await db.collection("archive").doc(title).set({
-      dateCreated: new Date(),
-      emoji,
-      text,
-      title
-    });
-    db.collection("stories").doc(title).delete();
-    return true;
+  if (text) {
+    if (text.length >= 60) {
+      await db.collection("archive").doc(title).set({
+        dateCreated: new Date(),
+        emoji,
+        text,
+        title
+      });
+      db.collection("stories").doc(title).delete();
+      return true;
+    }
   }
   db.collection("stories").doc(title).delete();
   return false;
