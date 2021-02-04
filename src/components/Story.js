@@ -28,6 +28,7 @@ function Story(props) {
   const [currentRound, changeCurrentRound] = useState();
   const [newCurrentRound, changeNewCurrentRound] = useState();
   const [checkAllChanged, setCheckAllChanged] = useState({ currentRound, timeObject, totalRounds });
+  const [storyCreatedBy, changeStoryCreatedBy] = useState();
   const [storyEmoji, changeEmoji] = useState("😂");
   const [gameOver, changeGameOver] = useState(false);
   const [alert, changeAlert] = useState("");
@@ -121,10 +122,11 @@ function Story(props) {
   useEffect(() => {
     const fetchInitialTimeInformation = async () => {
       const storyData = await fetchStoryData(title);
-      const { timeInformation, emoji, text } = storyData;
+      const { timeInformation, emoji, text, createdBy } = storyData;
       changeEmoji(emoji);
       changeTimeObject(timeInformation);
       changeText(text);
+      changeStoryCreatedBy(createdBy);
       changeCurrentRound(timeInformation.currentRound);
       changeTotalRounds(timeInformation.totalRounds);
     };
@@ -175,7 +177,7 @@ function Story(props) {
         changeText
       );
       setTimeout(async () => {
-        if (await archiveStory(title, updatedText, storyEmoji)) {
+        if (await archiveStory(title, updatedText, storyEmoji, storyCreatedBy)) {
           history.push(`/archive/${title}`);
         } else {
           history.push("/");

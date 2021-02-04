@@ -58,20 +58,33 @@ const addToStory = async (title, text, postData, changePosts, setDisplayText) =>
 };
 
 // Archives the story and deletes it, only accepts stories with characters with more than
-const archiveStory = async (title, text, emoji) => {
+const archiveStory = async (title, text, emoji, createdBy) => {
   if (text) {
     if (text.length >= 60) {
       await db.collection("archive").doc(title).set({
         dateCreated: new Date(),
         emoji,
         text,
-        title
+        title,
+        createdBy
       });
+      await db
+        .collection("users")
+        .doc(createdBy)
+        .update({
+          activePosts: firebase.firestore.FieldValue.increment(-1)
+        });
       db.collection("stories").doc(title).delete();
       return true;
     }
   }
   db.collection("stories").doc(title).delete();
+  await db
+    .collection("users")
+    .doc(createdBy)
+    .update({
+      activePosts: firebase.firestore.FieldValue.increment(-1)
+    });
   return false;
 };
 

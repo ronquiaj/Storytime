@@ -44,7 +44,6 @@ function AppNav(props) {
       }
     };
     setNav();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, updated]);
 
   const handleSignout = () => {
