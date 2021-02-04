@@ -68,7 +68,7 @@ export default function HomeForm(props) {
   };
 
   return (
-    <>
+    <div>
       <Dialog
         open={open}
         TransitionComponent={Transition}
@@ -82,12 +82,24 @@ export default function HomeForm(props) {
           <Card.Body>
             <Form onSubmit={handleSubmit}>
               <Form.Group>
-                <Form.Label>Title</Form.Label>
-                <Form.Control value={titleRef} onChange={changeTitleRef} required />
+                <Form.Label>Title (Must be more than 2 characters)</Form.Label>
+                <Form.Control
+                  value={titleRef}
+                  onChange={changeTitleRef}
+                  minLength='2'
+                  maxLength='33'
+                  required
+                />
               </Form.Group>
               <Form.Group>
-                <Form.Label>Beginning text</Form.Label>
-                <Form.Control value={textRef} onChange={changeTextRef} required />
+                <Form.Label>Beginning text (Must be more than 20 characters)</Form.Label>
+                <Form.Control
+                  value={textRef}
+                  onChange={changeTextRef}
+                  minLength='20'
+                  maxLength='120'
+                  required
+                />
               </Form.Group>
               <ReactSlider
                 sliderVal={timeIntervalRef}
@@ -109,7 +121,7 @@ export default function HomeForm(props) {
                 max={20}
                 step={1}
               />
-              <Row className={classes.formSubmit}>
+              <Row className={`${classes.formSubmit}`}>
                 <Col>
                   <Button type='submit' onClick={validate} className={classes.submitButton}>
                     Add story
@@ -167,6 +179,6 @@ export default function HomeForm(props) {
       <Button onClick={openOpen} className={classes.addButton}>
         Add new story
       </Button>
-    </>
+    </div>
   );
 }

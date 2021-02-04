@@ -9,6 +9,7 @@ function ArchivedStories(props) {
   const { classes } = props;
   const [archiveText, changeArchiveText] = useState("");
   const { title } = props.match.params;
+  const [emoji, changeEmoji] = useState("😂");
   const [loading, changeLoading] = useState(true);
 
   // fetches archive data
@@ -20,7 +21,8 @@ function ArchivedStories(props) {
   useEffect(() => {
     const displayArchivedPost = async () => {
       const archiveData = await fetchArchive();
-      const { text } = archiveData;
+      const { text, emoji } = archiveData;
+      changeEmoji(emoji);
       changeArchiveText(text);
     };
     displayArchivedPost();
@@ -33,7 +35,9 @@ function ArchivedStories(props) {
         <Spinner />
       ) : (
         <div>
-          <h1 className={classes.title}>{title}</h1>
+          <h1 className={classes.title}>
+            {title} {emoji}
+          </h1>
           <div className='box effect7'>
             <textarea disabled='yes' className={classes.text} value={archiveText} />
           </div>

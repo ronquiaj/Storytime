@@ -15,13 +15,13 @@ const styles = {
   titleLink: {
     color: "white"
   },
-    formSubmit: {
+  formSubmit: {
     display: "flex",
     justifyContent: "center"
   },
   addButton: {
     display: "flex",
-    margin: "0 auto",
+    margin: "0 auto"
   },
   submitButton: {
     display: "flex",
@@ -48,15 +48,19 @@ const styles = {
   submit: {
     width: "100%"
   },
-  '@media (max-width: 1024px)': {
-        emojiText: {
-          marginTop: "0.5rem",
-          fontSize: "1rem"
-        },
-        emoji: {
-          fontSize: "1.5rem"
-        }
-}}
-
+  form: {
+    overflowY: "none",
+    border: "5px solid green"
+  },
+  "@media (max-width: 1024px)": {
+    emojiText: {
+      marginTop: "0.5rem",
+      fontSize: "1rem"
+    },
+    emoji: {
+      fontSize: "1.5rem"
+    }
+  }
+};
 
 export default styles;

@@ -16,7 +16,8 @@ export default function StoryDisplay(props) {
     currentRound,
     totalRounds,
     secondsLeft,
-    gameOver
+    gameOver,
+    emoji
   } = props;
   return (
     <Container className={classes.container}>
@@ -25,7 +26,9 @@ export default function StoryDisplay(props) {
       ) : (
         <>
           <div>
-            <h1 className={classes.title}>{title}</h1>
+            <h1 className={classes.title}>
+              {title} {emoji}
+            </h1>
             <div className={classes.roundContainer}>
               {gameOver ? (
                 <h1 className={classes.rounds}>Story is over</h1>

@@ -209,6 +209,7 @@ function Story(props) {
         totalRounds={totalRounds}
         currentRound={currentRound}
         gameOver={gameOver}
+        emoji={storyEmoji}
       />
     </>
   );
