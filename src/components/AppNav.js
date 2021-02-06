@@ -1,37 +1,78 @@
 import { useContext, useState, useEffect } from "react";
-import { Navbar, Nav, Button } from "react-bootstrap";
 import { AuthenticatedContext } from "../contexts/AuthenticatedContext";
 import { UpdatedUserContext } from "../contexts/UpdatedUserContext";
 import { withStyles } from "@material-ui/core";
-import { auth, db } from "../firebase/Firebase";
-import { Link, useHistory } from "react-router-dom";
+import { db } from "../firebase/Firebase";
+import { Link } from "react-router-dom";
 
 const styles = {
-  profilePicture: {
-    width: "2.5rem",
-    height: "3rem"
-  },
   navbar: {
     display: "flex",
-    justifyContent: "center"
+    borderBottom: "0.01rem solid rgba(0, 0, 0, .3)",
+    width: "50vw",
+    height: "10vh",
+    margin: "2rem auto",
+    justifyContent: "space-around",
+    alignItems: "center"
   },
-  userInfo: {
+  stories: {
+    color: "gray"
+  },
+  profilePicture: {
+    width: "4rem",
+    height: "4rem",
+    borderRadius: "100px",
+    transition: ".6s all",
+    "&:hover": {
+      width: "4.72rem",
+      height: "4.72rem"
+    }
+  },
+  link: {
+    fontSize: "1.5rem",
+    transition: ".6s all",
+    color: "black",
+    "&:hover": {
+      color: "black",
+      fontSize: "2rem",
+      textDecoration: "none"
+    }
+  },
+  authentication: {
     display: "flex",
-    alignItems: "center",
-    marginLeft: "auto",
-    marginRight: "1rem"
+    justifyContent: "space-between",
+    width: "16vw"
   },
-  navItem: {
-    fontSize: "0.955rem"
+  "@media (max-width: 600px)": {
+    link: {
+      fontSize: "1rem",
+      "&:hover": {
+        color: "black",
+        fontSize: "1.4rem",
+        textDecoration: "none"
+      }
+    },
+    profilePicture: {
+      width: "3rem",
+      height: "3rem",
+      "&:hover": {
+        width: "3.7rem",
+        height: "3.7rem"
+      }
+    }
+  },
+  "@media (min-width: 768px)": {
+    authentication: {
+      fontSize: "1.2rem"
+    }
   }
 };
 
 function AppNav(props) {
-  const { user, updateUser } = useContext(AuthenticatedContext);
+  const { user } = useContext(AuthenticatedContext);
   const { updated } = useContext(UpdatedUserContext);
   const { classes } = props;
-  const history = useHistory();
-  const [displayNameRef, changeDisplayName] = useState("");
+  const [, changeDisplayName] = useState("");
   const [photoURLRef, changePhotoURL] = useState("");
 
   useEffect(() => {
@@ -46,55 +87,36 @@ function AppNav(props) {
     setNav();
   }, [user, updated]);
 
-  const handleSignout = () => {
-    auth
-      .signOut()
-      .then(() => {
-        updateUser(null);
-        history.push("/");
-        console.log("Successfully signed out...");
-      })
-      .catch((err) => {
-        console.log(`There was an error logging you out, ${err}`);
-      });
-  };
-
   return (
-    <Navbar collapseOnSelect className={classes.navbar} bg='dark' variant='dark' expand='sm'>
-      <Navbar.Brand style={{ marginLeft: "1rem" }} as={Link} to='/'>
-        Storytime
-      </Navbar.Brand>
-      <Navbar.Brand style={{ marginLeft: "1rem" }} as={Link} to='/archive'>
+    <div className={classes.navbar}>
+      <Link to='/' className={`${classes.stories} ${classes.link} `}>
+        Stories
+      </Link>
+      <Link to='/archive' className={`${classes.archive} ${classes.link}`}>
         Archive
-      </Navbar.Brand>
-      <Navbar.Toggle />
-      <Navbar.Collapse className={classes.collapse}>
-        <Nav style={{ width: "100%" }}>
-          {user ? (
-            <div className={classes.userInfo}>
-              <Navbar.Brand className={classes.navItem} onClick={handleSignout}>
-                <Button>Sign Out</Button>
-              </Navbar.Brand>
-              <Navbar.Brand className={classes.navItem}>
-                Welcome back, {displayNameRef}
-              </Navbar.Brand>
-              <Link to={`/users/${displayNameRef}/edit`}>
-                <img alt='profile' className={classes.profilePicture} src={photoURLRef} />
-              </Link>
-            </div>
-          ) : (
-            <>
-              <Nav.Link as={Link} to='/signup'>
-                Sign Up
-              </Nav.Link>
-              <Nav.Link as={Link} to='/login'>
-                Log in
-              </Nav.Link>
-            </>
-          )}
-        </Nav>
-      </Navbar.Collapse>
-    </Navbar>
+      </Link>
+
+      {!user ? (
+        <div className={classes.authentication}>
+          <Link to='/signup' className={`${classes.signup} ${classes.link}`}>
+            Sign Up
+          </Link>
+          <Link to='/login' className={`${classes.login} ${classes.link}`}>
+            Log in
+          </Link>
+        </div>
+      ) : (
+        <div className={classes.user}>
+          <Link to={`/users/${user.displayName}/edit`}>
+            <img
+              alt='profile'
+              className={`${classes.profilePicture} ${classes.link}`}
+              src={photoURLRef}
+            />
+          </Link>
+        </div>
+      )}
+    </div>
   );
 }
 export default withStyles(styles)(AppNav);
