@@ -1,8 +1,6 @@
+import archiveStyles from "./archivedStoriesStyles";
+
 const styles = {
-  storyCard: {
-    width: "25rem",
-    margin: "3rem 1rem"
-  },
   dialog: {
     display: "flex",
     width: "50vw"
@@ -17,7 +15,22 @@ const styles = {
   },
   formSubmit: {
     display: "flex",
-    justifyContent: "center"
+    justifyContent: "space-between",
+    alignItems: "center"
+  },
+  emojiContainer: {
+    cursor: "pointer"
+  },
+  emoji: {
+    transition: ".6s all",
+    marginLeft: "0.5rem",
+    fontSize: "1.5rem",
+    "&:hover": {
+      fontSize: "1.8rem"
+    }
+  },
+  emojiText: {
+    fontSize: "1.2rem"
   },
   addButton: {
     display: "flex",
@@ -31,16 +44,6 @@ const styles = {
     marginTop: "0.5rem",
     marginBottom: "0.5rem"
   },
-  emoji: {
-    display: "flex",
-    fontSize: "1.80rem",
-    justifyContent: "flex-end",
-    cursor: "pointer"
-  },
-  emojiText: {
-    marginRight: "1rem",
-    marginLeft: "1.3rem"
-  },
   miniStoryEmoji: {
     fontSize: "1.8rem",
     marginLeft: "20rem"
@@ -52,15 +55,7 @@ const styles = {
     overflowY: "none",
     border: "5px solid green"
   },
-  "@media (max-width: 1024px)": {
-    emojiText: {
-      marginTop: "0.5rem",
-      fontSize: "1rem"
-    },
-    emoji: {
-      fontSize: "1.5rem"
-    }
-  }
+  ...archiveStyles
 };
 
 export default styles;

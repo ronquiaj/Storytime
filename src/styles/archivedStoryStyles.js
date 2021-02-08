@@ -1,5 +1,5 @@
-const styles = {
-   container: {
+const archiveStyles = {
+  container: {
     display: "flex",
     justifyContent: "center",
     alignItems: "center"
@@ -12,7 +12,7 @@ const styles = {
   "@global": {
     ".effect7": {
       display: "flex",
-      width: "100vh",
+      width: "60vw",
       height: "20rem",
       position: "relative",
       webkitBoxShadow: "0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset",
@@ -22,15 +22,23 @@ const styles = {
     }
   },
   text: {
-    width: "100%",
+    width: "100vw",
     height: "100%",
     background: "rgba(0, 0, 0, 0)",
     border: "none",
     resize: "none",
     color: "black",
-    fontWeight: 100,
-    fontSize: "1.105rem"
+    fontWeight: 400,
+    fontSize: "1.105rem",
+    overflowY: "scroll"
+  },
+  "@media (max-width: 1000px)": {
+    "@global": {
+      ".effect7": {
+        width: "85vw"
+      }
+    }
   }
 };
 
-export default styles;
+export default archiveStyles;

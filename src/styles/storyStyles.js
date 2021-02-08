@@ -1,4 +1,6 @@
+import archiveStyles from "./archivedStoryStyles";
 const styles = {
+  ...archiveStyles,
   container: {
     display: "flex",
     flexDirection: "column",
@@ -9,35 +11,6 @@ const styles = {
     margin: "2rem 0",
     textAlign: "center",
     fontWeight: 400
-  },
-  "@global": {
-    ".effect7": {
-      display: "flex",
-      width: "100vh",
-      height: "20rem",
-      position: "relative",
-      webkitBoxShadow: "0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset",
-      mozBoxShadow: "0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset",
-      boxShadow: "0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset",
-      padding: "1rem"
-    },
-    ".fade-exit": {
-      opacity: 1
-    },
-    ".fade-exit-active": {
-      opacity: 0,
-      transition: "opacity 500ms ease-out"
-    }
-  },
-  text: {
-    width: "100%",
-    height: "100%",
-    background: "rgba(0, 0, 0, 0)",
-    border: "none",
-    resize: "none",
-    color: "black",
-    fontWeight: 100,
-    fontSize: "1.105rem"
   },
   post: {
     margin: "2.5rem 0"
@@ -51,7 +24,7 @@ const styles = {
   roundContainer: {
     padding: 0,
     marginBottom: "2rem",
-    width: "50vh",
+    width: "50vw",
     margin: "0 auto",
     webkitBoxShadow: "0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset",
     mozBoxShadow: "0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset",
@@ -66,11 +39,10 @@ const styles = {
   archive: {
     marginTop: "3rem"
   },
-  "@media (max-width: 748px)": {
+  "@media (max-width: 1000px)": {
     "@global": {
       ".effect7": {
-        display: "flex",
-        width: "48vh"
+        width: "85vw"
       }
     }
   }

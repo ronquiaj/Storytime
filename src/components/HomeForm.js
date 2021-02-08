@@ -1,14 +1,10 @@
 import React, { useState } from "react";
-import { Card, Button, Form, Container, Row, Col } from "react-bootstrap";
+import { Card, Button, Form } from "react-bootstrap";
 import Spinner from "./Spinner";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Slide from "@material-ui/core/Slide";
 import ReactSlider from "./ReactSlider";
-import Alert from "@material-ui/lab/Alert";
-import IconButton from "@material-ui/core/IconButton";
-import CloseIcon from "@material-ui/icons/Close";
-import Collapse from "@material-ui/core/Collapse";
 import Picker from "emoji-picker-react";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -30,12 +26,12 @@ export default function HomeForm(props) {
     roundsRef,
     changeRoundsRef,
     chosenEmoji,
-    changeChosenEmoji
+    changeChosenEmoji,
+    changeAlert,
+    setOpen: setOpenAlert
   } = props;
   const [open, setOpen] = useState(false);
   const [openEmoji, changeOpenEmoji] = useState(false);
-  const [alertMessage, changeAlertMessage] = useState("");
-  const [alertShown, setAlert] = useState(false);
 
   const openOpen = () => {
     setOpen(true);
@@ -48,10 +44,16 @@ export default function HomeForm(props) {
   // used to ensure that title and beginning text are not empty
   const validate = () => {
     if (!textRef || !titleRef) {
-      changeAlertMessage("Fill in both the title input and the text input.");
-      setAlert(true);
+      setOpenAlert(true);
+      changeAlert("Fill in both the title input and the text input.");
     } else {
-      close();
+      if (titleRef.length < 2) {
+        setOpenAlert(true);
+        changeAlert("Title length must be more than 2 characters.");
+      } else if (textRef.length < 9) {
+        setOpenAlert(true);
+        changeAlert("Text length must be 10 characters or more.");
+      } else close();
     }
   };
 
@@ -82,7 +84,7 @@ export default function HomeForm(props) {
           <Card.Body>
             <Form onSubmit={handleSubmit}>
               <Form.Group>
-                <Form.Label>Title (Must be more than 2 characters)</Form.Label>
+                <Form.Label>Title</Form.Label>
                 <Form.Control
                   value={titleRef}
                   onChange={changeTitleRef}
@@ -92,11 +94,11 @@ export default function HomeForm(props) {
                 />
               </Form.Group>
               <Form.Group>
-                <Form.Label>Beginning text (Must be more than 20 characters)</Form.Label>
+                <Form.Label>Beginning text</Form.Label>
                 <Form.Control
                   value={textRef}
                   onChange={changeTextRef}
-                  minLength='20'
+                  minLength='10'
                   maxLength='120'
                   required
                 />
@@ -121,37 +123,15 @@ export default function HomeForm(props) {
                 max={20}
                 step={1}
               />
-              <Row className={`${classes.formSubmit}`}>
-                <Col>
-                  <Button type='submit' onClick={validate} className={classes.submitButton}>
-                    Add story
-                  </Button>
-                </Col>
-                <Col className={classes.emoji}>
-                  <div onClick={triggerEmoji}>
-                    <span className={classes.emojiText}>Selected emoji: </span>
-                    {chosenEmoji}
-                  </div>
-                </Col>
-              </Row>
-              <Collapse in={alertShown}>
-                <Col>
-                  <Alert
-                    className={classes.alert}
-                    severity='error'
-                    action={
-                      <IconButton
-                        onClick={() => {
-                          changeAlertMessage("");
-                          setAlert(false);
-                        }}>
-                        <CloseIcon />
-                      </IconButton>
-                    }>
-                    {alertMessage}
-                  </Alert>
-                </Col>
-              </Collapse>
+              <div className={`${classes.formSubmit}`}>
+                <Button type='submit' onClick={validate} className={classes.submitButton}>
+                  Add story
+                </Button>
+                <div className={classes.emojiContainer} onClick={triggerEmoji}>
+                  <span className={classes.emojiText}>Selected emoji:</span>{" "}
+                  <span className={classes.emoji}>{chosenEmoji}</span>
+                </div>
+              </div>
             </Form>
           </Card.Body>
         </Card>
@@ -172,9 +152,9 @@ export default function HomeForm(props) {
         </Card>
       </Dialog>
 
-      <Container className={classes.container} fluid>
-        <Row>{loading ? <Spinner /> : stories}</Row>
-      </Container>
+      <div className={classes.container}>
+        {loading ? <Spinner /> : <div className={classes.archiveContainer}>{stories}</div>}
+      </div>
 
       <Button onClick={openOpen} className={classes.addButton}>
         Add new story

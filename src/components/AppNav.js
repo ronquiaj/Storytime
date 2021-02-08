@@ -43,14 +43,17 @@ const styles = {
     justifyContent: "space-between",
     width: "16vw"
   },
-  "@media (max-width: 600px)": {
+  "@media (max-width: 1000px)": {
     link: {
       fontSize: "1rem",
       "&:hover": {
         color: "black",
-        fontSize: "1.4rem",
+        fontSize: "1.2rem",
         textDecoration: "none"
       }
+    },
+    navbar: {
+      width: "80vw"
     },
     profilePicture: {
       width: "3rem",
@@ -59,11 +62,10 @@ const styles = {
         width: "3.7rem",
         height: "3.7rem"
       }
-    }
-  },
-  "@media (min-width: 768px)": {
+    },
     authentication: {
-      fontSize: "1.2rem"
+      width: "31vw",
+      justifyContent: "space-between"
     }
   }
 };

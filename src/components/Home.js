@@ -3,7 +3,8 @@ import firebase from "firebase/app";
 import { useState, useEffect, useContext } from "react";
 import useForm from "../hooks/useForm";
 import { withStyles } from "@material-ui/core";
-import { Alert } from "react-bootstrap";
+import Snackbar from "@material-ui/core/Snackbar";
+import MuiAlert from "@material-ui/lab/Alert";
 import { useHistory } from "react-router-dom";
 import { AuthenticatedContext } from "../contexts/AuthenticatedContext";
 import HomeForm from "./HomeForm";
@@ -18,6 +19,7 @@ function Home(props) {
   const { classes } = props;
   const [titleRef, changeTitleRef] = useForm("");
   const [textRef, changeTextRef] = useForm("");
+  const [open, setOpen] = useState(false);
   const [timeIntervalRef, changeTimeIntervalRef] = useState(30);
   const [roundsRef, changeRoundsRef] = useState(5);
   const [alert, changeAlert] = useState("");
@@ -25,6 +27,14 @@ function Home(props) {
   const [loading, changeLoading] = useState(true);
   const { user } = useContext(AuthenticatedContext);
   const [chosenEmoji, changeChosenEmoji] = useState(randomEmoji);
+
+  const Alert = (props) => {
+    return <MuiAlert elevation={6} variant='filled' {...props} />;
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   useEffect(() => {
     updateHomePage();
@@ -64,13 +74,16 @@ function Home(props) {
       changeStories(newStories);
     } else {
       // If there are no existing stories
-      changeStories(<h1 style={{ margin: "4rem" }}>There are no stories yet!</h1>);
+      changeStories(
+        <h1 style={{ margin: "4rem", textAlign: "center" }}>There are no stories yet!</h1>
+      );
     }
     changeLoading(false);
   }; // eslint-disable-next-line react-hooks/exhaustive-deps
 
   // Handler for when we add to story, checks our database to see if there is a story with that name already, and if there isn't adds to database
   const handleSubmit = async (e) => {
+    console.log("In here");
     if (user) {
       e.preventDefault();
       const storiesRef = await db.collection("stories").doc(titleRef).get(); // Fetch the data for storiesref
@@ -105,22 +118,23 @@ function Home(props) {
         } else {
           // If there is an existing story with the same name or archive with the same name
           changeAlert("There is already a story or archive with that title");
+          setOpen(true);
         }
       } else {
-        changeAlert("You've already posted 3 times, wait for the other posts to run out of time.");
+        changeAlert(
+          "You've already posted 3 or more times, wait for the other posts to run out of time."
+        );
+        setOpen(true);
       }
     } else history.push("/signup");
   };
 
   return (
     <>
-      {alert ? (
-        <Alert onClick={() => changeAlert("")} variant='danger'>
-          <Alert.Heading>{alert}</Alert.Heading>
-        </Alert>
-      ) : null}
       <HomeForm
         alert={alert}
+        changeAlert={changeAlert}
+        setOpen={setOpen}
         classes={classes}
         loading={loading}
         stories={stories}
@@ -136,6 +150,11 @@ function Home(props) {
         chosenEmoji={chosenEmoji}
         changeChosenEmoji={changeChosenEmoji}
       />
+      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity='error'>
+          {alert}
+        </Alert>
+      </Snackbar>
     </>
   );
 }

@@ -1,7 +1,6 @@
 import { withStyles } from "@material-ui/core";
 import React, { useState, useEffect, useCallback } from "react";
 import { db } from "../firebase/Firebase";
-import { Container, Row } from "react-bootstrap";
 import MiniStory from "./MiniStory";
 import styles from "../styles/archivedStoriesStyles";
 import Spinner from "./Spinner";
@@ -39,17 +38,15 @@ function ArchivedStories(props) {
   }, [fetchData]);
 
   return (
-    <Container className={classes.container}>
-      <Row>
-        {loading ? (
-          <Spinner />
-        ) : archivedPosts.length === 0 ? (
-          <h1 className={classes.noArchivedPosts}>There are no archived posts yet!</h1>
-        ) : (
-          archivedPosts
-        )}
-      </Row>
-    </Container>
+    <div className={classes.container}>
+      {loading ? (
+        <Spinner />
+      ) : archivedPosts.length === 0 ? (
+        <h1 className={classes.noArchivedPosts}>There are no archived posts yet!</h1>
+      ) : (
+        <div className={classes.archiveContainer}>{archivedPosts}</div>
+      )}
+    </div>
   );
 }
 

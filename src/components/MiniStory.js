@@ -12,7 +12,7 @@ export default function MiniStory(props) {
           <Card.Text>{text.length < 165 ? text : `${text.slice(0, 165)}...`}</Card.Text>
           <Row className={classes.submit}>
             <Col className={classes.visit}>
-              <Button variant='primary'>
+              <Button variant='primary' className={classes.button}>
                 <Link
                   className={classes.titleLink}
                   to={dateCreated ? `archive/${title}` : `/stories/${title}`}>
