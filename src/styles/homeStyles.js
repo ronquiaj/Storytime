@@ -19,9 +19,11 @@ const styles = {
     alignItems: "center"
   },
   emojiContainer: {
-    cursor: "pointer"
+    cursor: "pointer",
+    display: "flex",
+    flexDirection: "row"
   },
-  emoji: {
+  emojiPicker: {
     transition: ".6s all",
     marginLeft: "0.5rem",
     fontSize: "1.5rem",

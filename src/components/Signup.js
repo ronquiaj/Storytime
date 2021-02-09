@@ -3,9 +3,12 @@ import { useHistory } from "react-router-dom";
 import useForm from "../hooks/useForm";
 import { AuthenticatedContext } from "../contexts/AuthenticatedContext";
 import { db, storage, auth } from "../firebase/Firebase";
+import { withStyles } from "@material-ui/core";
 import SignupForm from "./SignupForm";
+import styles from "../styles/signupStyles";
 
-export default function Signin() {
+function Signin(props) {
+  const { classes } = props;
   const [emailRef, changeEmailRef] = useForm("");
   const [passwordRef, changePasswordRef] = useForm("");
   const [passwordConfirmationRef, changePasswordConfirmationRef] = useForm("");
@@ -125,6 +128,9 @@ export default function Signin() {
       changeDisplayNameRef={changeDisplayNameRef}
       handleChange={handleChange}
       alert={alert}
+      classes={classes}
     />
   );
 }
+
+export default withStyles(styles)(Signin);

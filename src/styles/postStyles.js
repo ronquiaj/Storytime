@@ -8,7 +8,9 @@ const styles = {
     justifyContent: "space-around",
     webkitBoxShadow: "7px 7px 63px -28px rgba(0,0,0,0.37)",
     mozBoxShadow: "7px 7px 63px -28px rgba(0,0,0,0.37)",
-    boxShadow: "7px 7px 63px -28px rgba(0,0,0,0.37)"
+    boxShadow: "7px 7px 63px -28px rgba(0,0,0,0.37)",
+    backgroundColor: "white",
+    borderRadius: "20px"
   },
   user: {
     display: "flex",

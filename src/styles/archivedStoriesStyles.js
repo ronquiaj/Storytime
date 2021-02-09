@@ -1,7 +1,15 @@
 const archiveStyles = {
   storyCard: {
-    width: "25rem",
-    margin: "3rem 0"
+    margin: "3rem 0",
+    opacity: "0.8",
+    borderRadius: "30px",
+    backgroundColor: "white",
+    padding: 0,
+    marginBottom: "2rem",
+    width: "30vw",
+    webkitBoxShadow: "0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset",
+    mozBoxShadow: "0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset",
+    boxShadow: "0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset"
   },
   titleLink: {
     color: "white"
@@ -42,7 +50,7 @@ const archiveStyles = {
   },
   "@media (max-width: 820px)": {
     archiveContainer: {
-      marginLeft: "2rem"
+      marginLeft: "1.6rem"
     },
     storyCard: {
       width: "80vw",

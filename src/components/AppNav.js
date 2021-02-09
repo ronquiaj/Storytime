@@ -4,71 +4,8 @@ import { UpdatedUserContext } from "../contexts/UpdatedUserContext";
 import { withStyles } from "@material-ui/core";
 import { db } from "../firebase/Firebase";
 import { Link } from "react-router-dom";
-
-const styles = {
-  navbar: {
-    display: "flex",
-    borderBottom: "0.01rem solid rgba(0, 0, 0, .3)",
-    width: "50vw",
-    height: "10vh",
-    margin: "2rem auto",
-    justifyContent: "space-around",
-    alignItems: "center"
-  },
-  stories: {
-    color: "gray"
-  },
-  profilePicture: {
-    width: "4rem",
-    height: "4rem",
-    borderRadius: "100px",
-    transition: ".6s all",
-    "&:hover": {
-      width: "4.72rem",
-      height: "4.72rem"
-    }
-  },
-  link: {
-    fontSize: "1.5rem",
-    transition: ".6s all",
-    color: "black",
-    "&:hover": {
-      color: "black",
-      fontSize: "2rem",
-      textDecoration: "none"
-    }
-  },
-  authentication: {
-    display: "flex",
-    justifyContent: "space-between",
-    width: "16vw"
-  },
-  "@media (max-width: 1000px)": {
-    link: {
-      fontSize: "1rem",
-      "&:hover": {
-        color: "black",
-        fontSize: "1.2rem",
-        textDecoration: "none"
-      }
-    },
-    navbar: {
-      width: "80vw"
-    },
-    profilePicture: {
-      width: "3rem",
-      height: "3rem",
-      "&:hover": {
-        width: "3.7rem",
-        height: "3.7rem"
-      }
-    },
-    authentication: {
-      width: "31vw",
-      justifyContent: "space-between"
-    }
-  }
-};
+import styles from "../styles/appNavStyles";
+import "../styles/bg.css";
 
 function AppNav(props) {
   const { user } = useContext(AuthenticatedContext);
@@ -82,7 +19,6 @@ function AppNav(props) {
       if (user && user.displayName) {
         const userDataRef = await db.collection("users").doc(user.displayName).get();
         const { displayName, photoURL } = userDataRef.data();
-        changePhotoURL(photoURL);
         changeDisplayName(displayName);
       }
     };
@@ -90,34 +26,40 @@ function AppNav(props) {
   }, [user, updated]);
 
   return (
-    <div className={classes.navbar}>
-      <Link to='/' className={`${classes.stories} ${classes.link} `}>
-        Stories
-      </Link>
-      <Link to='/archive' className={`${classes.archive} ${classes.link}`}>
-        Archive
-      </Link>
+    <div className={classes.container}>
+      <img
+        className={classes.logo}
+        src='https://firebasestorage.googleapis.com/v0/b/storytime-7f96d.appspot.com/o/logo.png?alt=media&token=14f37c87-6341-4933-acca-d3bcab8912a4'
+      />
+      <div className={classes.navbar}>
+        <Link to='/' className={`${classes.stories} ${classes.link} `}>
+          Stories
+        </Link>
+        <Link to='/archive' className={`${classes.archive} ${classes.link}`}>
+          Archive
+        </Link>
 
-      {!user ? (
-        <div className={classes.authentication}>
-          <Link to='/signup' className={`${classes.signup} ${classes.link}`}>
-            Sign Up
-          </Link>
-          <Link to='/login' className={`${classes.login} ${classes.link}`}>
-            Log in
-          </Link>
-        </div>
-      ) : (
-        <div className={classes.user}>
-          <Link to={`/users/${user.displayName}/edit`}>
-            <img
-              alt='profile'
-              className={`${classes.profilePicture} ${classes.link}`}
-              src={photoURLRef}
-            />
-          </Link>
-        </div>
-      )}
+        {!user ? (
+          <div className={classes.authentication}>
+            <Link to='/signup' className={`${classes.signup} ${classes.link}`}>
+              Sign Up
+            </Link>
+            <Link to='/login' className={`${classes.login} ${classes.link}`}>
+              Log in
+            </Link>
+          </div>
+        ) : (
+          <div className={classes.user}>
+            <Link to={`/users/${user.displayName}/edit`}>
+              <img
+                alt='profile'
+                className={`${classes.profilePicture} ${classes.link}`}
+                src={photoURLRef}
+              />
+            </Link>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

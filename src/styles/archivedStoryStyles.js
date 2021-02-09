@@ -11,6 +11,7 @@ const archiveStyles = {
   },
   "@global": {
     ".effect7": {
+      backgroundColor: "white",
       display: "flex",
       width: "60vw",
       height: "20rem",

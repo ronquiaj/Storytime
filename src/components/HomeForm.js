@@ -128,8 +128,9 @@ export default function HomeForm(props) {
                   Add story
                 </Button>
                 <div className={classes.emojiContainer} onClick={triggerEmoji}>
-                  <span className={classes.emojiText}>Selected emoji:</span>{" "}
-                  <span className={classes.emoji}>{chosenEmoji}</span>
+                  <h1 className={classes.emojiText}>
+                    Selected emoji: <span className={classes.emojiPicker}>{chosenEmoji}</span>
+                  </h1>
                 </div>
               </div>
             </Form>

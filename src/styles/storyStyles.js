@@ -22,6 +22,7 @@ const styles = {
     marginTop: "1.5rem"
   },
   roundContainer: {
+    backgroundColor: "white",
     padding: 0,
     marginBottom: "2rem",
     width: "50vw",
@@ -44,6 +45,9 @@ const styles = {
       ".effect7": {
         width: "85vw"
       }
+    },
+    roundContainer: {
+      width: "100vw"
     }
   }
 };

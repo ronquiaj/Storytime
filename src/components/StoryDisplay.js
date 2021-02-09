@@ -52,7 +52,7 @@ export default function StoryDisplay(props) {
               This post will now be archived... Redirecting to the archive page...
             </h1>
           ) : (
-            <div>
+            <>
               <ul className={classes.postContainer}>{posts}</ul>
               <Form onSubmit={handleClick} className={classes.post}>
                 <Form.Group>
@@ -69,7 +69,7 @@ export default function StoryDisplay(props) {
                   Post
                 </Button>
               </Form>{" "}
-            </div>
+            </>
           )}
         </>
       )}
