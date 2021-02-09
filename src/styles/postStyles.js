@@ -55,6 +55,17 @@ const styles = {
     },
     arrowContainer: {
       marginLeft: "0"
+    },
+    image: {
+      marginLeft: "2.5rem",
+      width: "4.4rem",
+      height: "4rem"
+    },
+    text: {
+      marginLeft: "1rem"
+    },
+    username: {
+      marginLeft: "2.3rem"
     }
   }
 };

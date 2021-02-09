@@ -8,7 +8,6 @@ import AppNav from "./AppNav";
 import Error from "./Error";
 import Story from "./Story";
 import User from "./User";
-import EditUser from "./EditUser";
 import ArchivedStories from "./ArchivedStories";
 import ArchivedStory from "./ArchivedStory";
 
@@ -28,11 +27,6 @@ function App() {
               exact
               path='/archive/:title'
               render={(routeProps) => <ArchivedStory {...routeProps} />}
-            />
-            <Route
-              exact
-              path='/users/:user/edit'
-              render={(routeProps) => <EditUser {...routeProps} />}
             />
             <Route
               exact

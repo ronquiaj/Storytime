@@ -4,14 +4,14 @@ const styles = {
     borderBottom: "0.01rem solid rgba(0, 0, 0, .3)",
     width: "50vw",
     height: "10vh",
-    margin: "2rem auto",
+    margin: "0 auto",
     justifyContent: "space-around",
     alignItems: "center"
   },
   logo: {
-    width: "12rem",
-    height: "5rem",
-    position: "absolute",
+    display: "flex",
+    width: "15rem",
+    height: "10rem",
     marginLeft: "2rem"
   },
   stories: {
@@ -30,6 +30,7 @@ const styles = {
   link: {
     fontSize: "1.5rem",
     transition: ".6s all",
+    marginBottom: "1rem",
     color: "black",
     "&:hover": {
       color: "black",
@@ -51,6 +52,9 @@ const styles = {
         fontSize: "1.2rem",
         textDecoration: "none"
       }
+    },
+    logo: {
+      margin: "2rem auto"
     },
     navbar: {
       width: "80vw"

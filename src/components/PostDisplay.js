@@ -10,7 +10,9 @@ export default function PostDisplay(props) {
         <div className={classes.user}>
           <img alt='user profile pic' className={classes.image} src={photoURL} />
           <Link to={`/users/${username}`}>
-            <h4 style={{ fontSize: "0.7rem" }}>{username}</h4>
+            <h4 className={classes.username} style={{ fontSize: "0.7rem" }}>
+              {username}
+            </h4>
           </Link>
         </div>
       </Col>

@@ -20,6 +20,7 @@ function AppNav(props) {
         const userDataRef = await db.collection("users").doc(user.displayName).get();
         const { displayName, photoURL } = userDataRef.data();
         changeDisplayName(displayName);
+        changePhotoURL(photoURL);
       }
     };
     setNav();
@@ -28,6 +29,7 @@ function AppNav(props) {
   return (
     <div className={classes.container}>
       <img
+        alt='logo'
         className={classes.logo}
         src='https://firebasestorage.googleapis.com/v0/b/storytime-7f96d.appspot.com/o/logo.png?alt=media&token=14f37c87-6341-4933-acca-d3bcab8912a4'
       />
@@ -50,7 +52,7 @@ function AppNav(props) {
           </div>
         ) : (
           <div className={classes.user}>
-            <Link to={`/users/${user.displayName}/edit`}>
+            <Link to={`/users/${user.displayName}`}>
               <img
                 alt='profile'
                 className={`${classes.profilePicture} ${classes.link}`}

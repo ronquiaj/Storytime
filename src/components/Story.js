@@ -1,7 +1,6 @@
 import firebase from "firebase/app";
 import "firebase/firestore";
 import { useEffect, useState, useContext, useCallback } from "react";
-import { Alert } from "react-bootstrap";
 import { useHistory } from "react-router-dom";
 import { withStyles } from "@material-ui/core";
 import { db } from "../firebase/Firebase";
@@ -12,6 +11,8 @@ import styles from "../styles/storyStyles.js";
 import StoryDisplay from "./StoryDisplay";
 import { compareTime, getCurrentTime, calculateTimeDifference } from "../functions/timer";
 import { fetchStoryData, checkPosted, addToStory, archiveStory } from "../functions/storyFunctions";
+import Snackbar from "@material-ui/core/Snackbar";
+import MuiAlert from "@material-ui/lab/Alert";
 
 function Story(props) {
   const history = useHistory();
@@ -19,6 +20,7 @@ function Story(props) {
   const { classes } = props;
   const { user } = useContext(AuthenticatedContext);
   const [loading, changeLoading] = useState(true);
+  const [open, setOpen] = useState(false);
   const [displayText, changeText] = useState("");
   const [displayPosts, changeDisplayPosts] = useState([]);
   const [newPost, changeNewPost, reset] = useForm("");
@@ -32,6 +34,14 @@ function Story(props) {
   const [storyEmoji, changeEmoji] = useState("😂");
   const [gameOver, changeGameOver] = useState(false);
   const [alert, changeAlert] = useState("");
+
+  const Alert = (props) => {
+    return <MuiAlert elevation={6} variant='filled' {...props} />;
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   // Click handler for adding a new post to the story
   const handleClick = async (e) => {
@@ -59,6 +69,7 @@ function Story(props) {
           .catch((err) => err);
       } else {
         changeAlert("You've already posted, wait for the time to run out.");
+        setOpen(true);
       }
     } else history.push("/signup");
   };
@@ -71,6 +82,7 @@ function Story(props) {
     if (posts.length > 0) {
       const newPosts = posts.map((post) => (
         <Post
+          setOpen={setOpen}
           changeAlert={changeAlert}
           key={post.owner.username}
           {...post}
@@ -191,11 +203,6 @@ function Story(props) {
 
   return (
     <>
-      {alert ? (
-        <Alert onClick={() => changeAlert("")} variant='danger'>
-          <Alert.Heading>{alert}</Alert.Heading>
-        </Alert>
-      ) : null}
       <StoryDisplay
         classes={classes}
         loading={loading}
@@ -211,6 +218,11 @@ function Story(props) {
         gameOver={gameOver}
         emoji={storyEmoji}
       />
+      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity='error'>
+          {alert}
+        </Alert>
+      </Snackbar>
     </>
   );
 }
