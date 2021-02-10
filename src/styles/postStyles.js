@@ -1,32 +1,29 @@
 const styles = {
   container: {
     display: "flex",
-    width: "100%",
+    width: "75vw",
     height: "8rem",
-    margin: "0.7rem 0",
-    alignItems: "center",
-    justifyContent: "space-around",
     webkitBoxShadow: "7px 7px 63px -28px rgba(0,0,0,0.37)",
     mozBoxShadow: "7px 7px 63px -28px rgba(0,0,0,0.37)",
     boxShadow: "7px 7px 63px -28px rgba(0,0,0,0.37)",
     backgroundColor: "white",
-    borderRadius: "20px"
-  },
-  user: {
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
+    borderRadius: "20px",
+    marginTop: "2rem",
     alignItems: "center",
-    width: "25%",
-    margin: "1rem auto 0 0"
+    justifyContent: "space-around",
+    textAlign: "center",
+    marginRight: "3rem"
   },
+  user: {},
   image: {
     width: "5.5rem",
-    height: "5rem"
+    height: "5rem",
+    marginTop: "1rem"
   },
   text: {
     fontSize: "1.5rem",
-    width: "100%"
+    width: "50vw",
+    marginLeft: "1rem"
   },
   arrow: {
     display: "flex",
@@ -46,24 +43,17 @@ const styles = {
     }
   },
   arrowContainer: {
-    marginLeft: "8rem",
     display: "flex"
   },
-  "@media (max-width: 1024px)": {
-    arrowContainer: {
-      marginLeft: "0"
-    },
-    image: {
-      marginLeft: "2.5rem",
-      width: "4.4rem",
-      height: "4rem"
+  "@media (max-width: 1025px)": {
+    container: {
+      width: "95vw"
     },
     text: {
-      marginLeft: "1rem",
-      fontSize: "0.84rem"
+      fontSize: "0.9rem"
     },
-    username: {
-      marginLeft: "2.3rem"
+    image: {
+      marginLeft: "0.2rem"
     }
   }
 };

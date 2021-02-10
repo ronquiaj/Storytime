@@ -2,7 +2,8 @@ const archiveStyles = {
   container: {
     display: "flex",
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
+    margin: "0 auto"
   },
   title: {
     margin: "2rem 0",
@@ -36,7 +37,7 @@ const archiveStyles = {
   "@media (max-width: 1000px)": {
     "@global": {
       ".effect7": {
-        width: "85vw"
+        width: "90vw"
       }
     },
     container: {

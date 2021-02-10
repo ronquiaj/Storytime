@@ -15,7 +15,8 @@ const fetchStoryData = async (title) => {
 
 // Takes in postdata (basically all the documents posts) from state, look at which has the highest vote, and then updates the text and resets the posts
 const addToStory = async (title, text, postData, changePosts, setDisplayText) => {
-  const winner = { votes: -9999, text: "" };
+  let winner = { votes: -9999, text: "" };
+  let tieList = [];
   let updatedText = text;
   if (postData.length > 2 || postData.length === 1) {
     for (let post of postData) {
@@ -23,6 +24,9 @@ const addToStory = async (title, text, postData, changePosts, setDisplayText) =>
         winner["votes"] = post.props.votes;
         winner["text"] = post.props.text;
         winner["username"] = post.props.owner.username;
+        tieList = [winner];
+      } else if (post.props.votes === winner.votes) {
+        tieList.push(post.props);
       }
     }
   } else if (postData.length === 2) {
@@ -36,6 +40,11 @@ const addToStory = async (title, text, postData, changePosts, setDisplayText) =>
       winner["text"] = postData[Math.floor(Math.random() * 2)].props.text;
       winner["username"] = postData[Math.floor(Math.random() * 2)].props.owner.username;
     }
+  }
+
+  if (tieList.length > 1) {
+    winner["text"] = tieList[Math.floor(Math.random() * tieList.length)].text;
+    winner["username"] = tieList[Math.floor(Math.random() * tieList.length)].username;
   }
 
   //If the text did change, meaning there was at least one post on the story

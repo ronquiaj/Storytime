@@ -8,7 +8,7 @@ import { AlertContext } from "../contexts/AlertContext";
 
 function ArchivedStories(props) {
   const { classes } = props;
-  const { openSnackbar, SnackbarAlert } = useContext(AlertContext);
+  const { SnackbarAlert } = useContext(AlertContext);
   const [archiveText, changeArchiveText] = useState("");
   const { title } = props.match.params;
   const [emoji, changeEmoji] = useState("😂");

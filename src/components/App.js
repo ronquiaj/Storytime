@@ -11,6 +11,7 @@ import Story from "./Story";
 import User from "./User";
 import ArchivedStories from "./ArchivedStories";
 import ArchivedStory from "./ArchivedStory";
+import Landing from "./Landing";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
             <AppNav />
             <Switch>
               <Route exact path='/' render={() => <Home />} />
+              <Route exact path='/landing' render={() => <Landing />} />
               <Route exact path='/signup' render={() => <Signup />} />
               <Route exact path='/login' render={() => <Login />} />
               <Route exact path='/archive' render={() => <ArchivedStories />} />

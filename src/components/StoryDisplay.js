@@ -48,9 +48,7 @@ export default function StoryDisplay(props) {
           </div>
 
           {gameOver ? (
-            <h1 className={classes.archive}>
-              This post will now be archived... Redirecting to the archive page...
-            </h1>
+            <h1 className={classes.archive}>Redirecting...</h1>
           ) : (
             <>
               <ul className={classes.postContainer}>{posts}</ul>

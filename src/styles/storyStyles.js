@@ -18,6 +18,7 @@ const styles = {
   postContainer: {
     display: "flex",
     width: "100%",
+    alignItems: "center",
     flexDirection: "column",
     marginTop: "1.5rem"
   },
