@@ -40,7 +40,7 @@ const archiveStyles = {
       }
     },
     container: {
-      marginBottom: "2rem"
+      margin: "1rem auto"
     }
   }
 };

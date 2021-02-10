@@ -1,12 +1,14 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useContext } from "react";
 import { withStyles } from "@material-ui/core";
 import { Container } from "react-bootstrap";
 import { db } from "../firebase/Firebase";
 import styles from "../styles/archivedStoryStyles";
 import Spinner from "./Spinner";
+import { AlertContext } from "../contexts/AlertContext";
 
 function ArchivedStories(props) {
   const { classes } = props;
+  const { openSnackbar, SnackbarAlert } = useContext(AlertContext);
   const [archiveText, changeArchiveText] = useState("");
   const { title } = props.match.params;
   const [emoji, changeEmoji] = useState("😂");
@@ -43,6 +45,7 @@ function ArchivedStories(props) {
           </div>
         </div>
       )}
+      <SnackbarAlert color='success' />
     </Container>
   );
 }

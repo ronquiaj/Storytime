@@ -89,7 +89,7 @@ const styles = {
       margin: "2rem auto"
     },
     profilePicture: {
-      width: "60%"
+      width: "40%"
     },
     imageSubmit: {
       marginTop: "1.5rem"
@@ -97,6 +97,14 @@ const styles = {
     bioSubmit: {
       marginRight: "1rem",
       width: "40%"
+    }
+  },
+  "@media (max-width: 600px)": {
+    profilePicture: {
+      width: "70%"
+    },
+    imageSubmit: {
+      marginRight: "1.5rem"
     }
   }
 };

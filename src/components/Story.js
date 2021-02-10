@@ -173,10 +173,10 @@ function Story(props) {
       );
       setTimeout(async () => {
         if (await archiveStory(title, updatedText, storyEmoji, storyCreatedBy)) {
-          console.log("In here");
+          setAlert("Story successfully added to archive");
+          openSnackbar();
           history.push(`/archive/${title}`);
         } else {
-          console.log("in here");
           setAlert("Story must be more than 160 characters to be added to the archive :(");
           openSnackbar();
           history.push("/");

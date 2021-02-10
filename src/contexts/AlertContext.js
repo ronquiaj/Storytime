@@ -22,7 +22,7 @@ export function AlertProvider(props) {
 
   const SnackbarAlert = ({ color }) => {
     return (
-      <Snackbar open={open} autoHideDuration={6000} onClose={closeSnackbar}>
+      <Snackbar open={open} autoHideDuration={1500} onClose={closeSnackbar}>
         <Alert onClose={closeSnackbar} severity={color || "error"}>
           {alert}
         </Alert>
