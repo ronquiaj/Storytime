@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext } from "react";
 import { AuthenticatedContext } from "../contexts/AuthenticatedContext";
 import { UpdatedUserContext } from "../contexts/UpdatedUserContext";
+import { AlertContext } from "../contexts/AlertContext";
 import { useHistory } from "react-router-dom";
 import { db, storage, auth } from "../firebase/Firebase";
 import { withStyles } from "@material-ui/core";
@@ -8,8 +9,6 @@ import Spinner from "./Spinner";
 import UserDisplay from "./UserDisplay";
 import useForm from "../hooks/useForm";
 import styles from "../styles/userDisplayStyles";
-import Snackbar from "@material-ui/core/Snackbar";
-import MuiAlert from "@material-ui/lab/Alert";
 
 function User(props) {
   const history = useHistory();
@@ -25,16 +24,7 @@ function User(props) {
   const [pageLoaded, changePageLoaded] = useState(false);
   const { user, updateUser } = useContext(AuthenticatedContext);
   const { userUpdated } = useContext(UpdatedUserContext);
-  const [open, setOpen] = useState(false);
-  const [alert, changeAlert] = useState("");
-
-  const Alert = (props) => {
-    return <MuiAlert elevation={6} variant='filled' {...props} />;
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
+  const { openSnackbar, setAlert, SnackbarAlert } = useContext(AlertContext);
 
   const handleSignout = () => {
     auth
@@ -93,8 +83,8 @@ function User(props) {
         { merge: true }
       );
     }
-    changeAlert("Successfully updated!");
-    setOpen(true);
+    setAlert("Successfully updated!");
+    openSnackbar();
   };
 
   const handleImageChange = (e) => {
@@ -144,11 +134,7 @@ function User(props) {
       ) : (
         <Spinner />
       )}
-      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-        <Alert onClose={handleClose} severity='success'>
-          {alert}
-        </Alert>
-      </Snackbar>
+      <SnackbarAlert color='success' />
     </div>
   );
 }

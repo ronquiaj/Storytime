@@ -11,8 +11,7 @@ import styles from "../styles/storyStyles.js";
 import StoryDisplay from "./StoryDisplay";
 import { compareTime, getCurrentTime, calculateTimeDifference } from "../functions/timer";
 import { fetchStoryData, checkPosted, addToStory, archiveStory } from "../functions/storyFunctions";
-import Snackbar from "@material-ui/core/Snackbar";
-import MuiAlert from "@material-ui/lab/Alert";
+import { AlertContext } from "../contexts/AlertContext";
 
 function Story(props) {
   const history = useHistory();
@@ -20,7 +19,6 @@ function Story(props) {
   const { classes } = props;
   const { user } = useContext(AuthenticatedContext);
   const [loading, changeLoading] = useState(true);
-  const [open, setOpen] = useState(false);
   const [displayText, changeText] = useState("");
   const [displayPosts, changeDisplayPosts] = useState([]);
   const [newPost, changeNewPost, reset] = useForm("");
@@ -33,15 +31,7 @@ function Story(props) {
   const [storyCreatedBy, changeStoryCreatedBy] = useState();
   const [storyEmoji, changeEmoji] = useState("😂");
   const [gameOver, changeGameOver] = useState(false);
-  const [alert, changeAlert] = useState("");
-
-  const Alert = (props) => {
-    return <MuiAlert elevation={6} variant='filled' {...props} />;
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
+  const { openSnackbar, setAlert, SnackbarAlert } = useContext(AlertContext);
 
   // Click handler for adding a new post to the story
   const handleClick = async (e) => {
@@ -68,8 +58,8 @@ function Story(props) {
           })
           .catch((err) => err);
       } else {
-        changeAlert("You've already posted, wait for the time to run out.");
-        setOpen(true);
+        setAlert("You've already posted, wait for the time to run out.");
+        openSnackbar();
       }
     } else history.push("/signup");
   };
@@ -81,14 +71,7 @@ function Story(props) {
     // Get all the posts from the database for this particular story
     if (posts.length > 0) {
       const newPosts = posts.map((post) => (
-        <Post
-          setOpen={setOpen}
-          changeAlert={changeAlert}
-          key={post.owner.username}
-          {...post}
-          title={title}
-          emoji={emoji}
-        />
+        <Post key={post.owner.username} {...post} title={title} emoji={emoji} />
       ));
       changeDisplayPosts(newPosts);
     }
@@ -190,8 +173,12 @@ function Story(props) {
       );
       setTimeout(async () => {
         if (await archiveStory(title, updatedText, storyEmoji, storyCreatedBy)) {
+          console.log("In here");
           history.push(`/archive/${title}`);
         } else {
+          console.log("in here");
+          setAlert("Story must be more than 160 characters to be added to the archive :(");
+          openSnackbar();
           history.push("/");
         }
       }, 1750);
@@ -218,11 +205,7 @@ function Story(props) {
         gameOver={gameOver}
         emoji={storyEmoji}
       />
-      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-        <Alert onClose={handleClose} severity='error'>
-          {alert}
-        </Alert>
-      </Snackbar>
+      <SnackbarAlert />
     </>
   );
 }

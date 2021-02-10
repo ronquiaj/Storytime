@@ -57,7 +57,9 @@ const styles = {
     padding: "1rem"
   },
   imageSubmit: {
-    margin: "1rem auto"
+    width: "50%",
+    marginLeft: "2rem",
+    marginTop: "1.2rem"
   },
   signoutButton: {
     backgroundColor: "red",
@@ -72,9 +74,10 @@ const styles = {
   },
   bioSubmit: {
     marginTop: "1rem",
-    marginRight: "3rem",
+
     display: "flex",
-    flexDirection: "column"
+    flexDirection: "column",
+    width: "50%"
   },
   "@media (max-width: 1000px)": {
     paper: {
@@ -88,8 +91,12 @@ const styles = {
     profilePicture: {
       width: "60%"
     },
+    imageSubmit: {
+      marginTop: "1.5rem"
+    },
     bioSubmit: {
-      marginLeft: "1rem"
+      marginRight: "1rem",
+      width: "40%"
     }
   }
 };

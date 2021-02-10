@@ -38,6 +38,9 @@ const archiveStyles = {
       ".effect7": {
         width: "85vw"
       }
+    },
+    container: {
+      marginBottom: "2rem"
     }
   }
 };

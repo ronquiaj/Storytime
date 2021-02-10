@@ -50,9 +50,6 @@ const styles = {
     display: "flex"
   },
   "@media (max-width: 1024px)": {
-    text: {
-      fontSize: "0.84rem"
-    },
     arrowContainer: {
       marginLeft: "0"
     },
@@ -62,7 +59,8 @@ const styles = {
       height: "4rem"
     },
     text: {
-      marginLeft: "1rem"
+      marginLeft: "1rem",
+      fontSize: "0.84rem"
     },
     username: {
       marginLeft: "2.3rem"

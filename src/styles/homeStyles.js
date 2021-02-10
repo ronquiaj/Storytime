@@ -36,7 +36,12 @@ const styles = {
   },
   addButton: {
     display: "flex",
-    margin: "0 auto"
+    margin: "2rem auto",
+    textAlign: "center",
+    transition: "0.6s all",
+    "&:hover": {
+      padding: "0.7rem"
+    }
   },
   submitButton: {
     display: "flex",

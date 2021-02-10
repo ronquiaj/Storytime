@@ -60,7 +60,7 @@ const addToStory = async (title, text, postData, changePosts, setDisplayText) =>
 // Archives the story and deletes it, only accepts stories with characters with more than
 const archiveStory = async (title, text, emoji, createdBy) => {
   if (text) {
-    if (text.length >= 60) {
+    if (text.length >= 160) {
       await db.collection("archive").doc(title).set({
         dateCreated: new Date(),
         emoji,

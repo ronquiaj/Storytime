@@ -14,6 +14,17 @@ const archiveStyles = {
   titleLink: {
     color: "white"
   },
+  button: {
+    transition: "0.6s all",
+    "&:hover a": {
+      textDecoration: "none",
+      color: "white"
+    },
+    "&:hover": {
+      width: "11rem",
+      height: "3.3rem"
+    }
+  },
   submit: {
     width: "100%"
   },

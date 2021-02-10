@@ -1,6 +1,7 @@
 import { Route, Switch } from "react-router";
 import { AuthenticatedProvider } from "../contexts/AuthenticatedContext";
 import { UpdatedUserProvider } from "../contexts/UpdatedUserContext";
+import { AlertProvider } from "../contexts/AlertContext";
 import Login from "./Login";
 import Home from "./Home";
 import Signup from "./Signup";
@@ -16,25 +17,27 @@ function App() {
     <div style={{ fontFamily: "Work Sans, sans-serif", fontWeight: 100 }}>
       <AuthenticatedProvider>
         <UpdatedUserProvider>
-          <AppNav />
-          <Switch>
-            <Route exact path='/' render={() => <Home />} />
-            <Route exact path='/signup' render={() => <Signup />} />
-            <Route exact path='/login' render={() => <Login />} />
-            <Route exact path='/archive' render={() => <ArchivedStories />} />
-            <Route exact path='/users/:user' render={(routeProps) => <User {...routeProps} />} />
-            <Route
-              exact
-              path='/archive/:title'
-              render={(routeProps) => <ArchivedStory {...routeProps} />}
-            />
-            <Route
-              exact
-              path='/stories/:title'
-              render={(routeProps) => <Story {...routeProps} />}
-            />
-            <Route path='*' render={() => <Error />} />
-          </Switch>
+          <AlertProvider>
+            <AppNav />
+            <Switch>
+              <Route exact path='/' render={() => <Home />} />
+              <Route exact path='/signup' render={() => <Signup />} />
+              <Route exact path='/login' render={() => <Login />} />
+              <Route exact path='/archive' render={() => <ArchivedStories />} />
+              <Route exact path='/users/:user' render={(routeProps) => <User {...routeProps} />} />
+              <Route
+                exact
+                path='/archive/:title'
+                render={(routeProps) => <ArchivedStory {...routeProps} />}
+              />
+              <Route
+                exact
+                path='/stories/:title'
+                render={(routeProps) => <Story {...routeProps} />}
+              />
+              <Route path='*' render={() => <Error />} />
+            </Switch>
+          </AlertProvider>
         </UpdatedUserProvider>
       </AuthenticatedProvider>
     </div>

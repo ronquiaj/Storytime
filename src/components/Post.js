@@ -4,13 +4,15 @@ import { withStyles } from "@material-ui/core";
 import { useHistory } from "react-router-dom";
 import { db } from "../firebase/Firebase";
 import { AuthenticatedContext } from "../contexts/AuthenticatedContext";
+import { AlertContext } from "../contexts/AlertContext";
 import styles from "../styles/postStyles";
 import PostDisplay from "./PostDisplay";
 
 function Post(props) {
-  const { classes, text, title, changeAlert, votes, setOpen } = props;
+  const { classes, text, title, votes } = props;
   const { photoURL, username } = props.owner;
   const { user } = useContext(AuthenticatedContext);
+  const { openSnackbar, setAlert, SnackbarAlert } = useContext(AlertContext);
   const history = useHistory();
 
   // Function to handle a user that has already voted, returns an object with voted and addToVote values
@@ -19,8 +21,8 @@ function Post(props) {
       //
       if (voteValue === 1) {
         // voteValue represents the user clicking either up or down
-        changeAlert("You can't vote more than once");
-        setOpen(true);
+        setAlert("You can't vote more than once");
+        openSnackbar();
         return { voted: 1, addToVote: 0 };
       } else if (voteValue === -1) {
         // Negative vote
@@ -28,8 +30,8 @@ function Post(props) {
       }
     } else if (currentVoter.voted === -1) {
       if (voteValue === -1) {
-        changeAlert("You can't vote more than once");
-        setOpen(true);
+        setAlert("You can't vote more than once");
+        openSnackbar();
         return { voted: -1, addToVote: 0 };
       } else if (voteValue === 1) {
         return { voted: 0, addToVote: 1 };
@@ -100,14 +102,17 @@ function Post(props) {
   };
 
   return (
-    <PostDisplay
-      classes={classes}
-      photoURL={photoURL}
-      username={username}
-      text={text}
-      handleVote={handleVote}
-      votes={votes}
-    />
+    <>
+      <PostDisplay
+        classes={classes}
+        photoURL={photoURL}
+        username={username}
+        text={text}
+        handleVote={handleVote}
+        votes={votes}
+      />
+      <SnackbarAlert />
+    </>
   );
 }
 

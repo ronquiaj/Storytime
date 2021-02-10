@@ -35,7 +35,7 @@ function ArchivedStories(props) {
   //useeffect to fetch arhive data from the database
   useEffect(() => {
     fetchData();
-  }, [fetchData]);
+  }, [fetchData]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className={classes.container}>

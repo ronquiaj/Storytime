@@ -3,10 +3,9 @@ import firebase from "firebase/app";
 import { useState, useEffect, useContext } from "react";
 import useForm from "../hooks/useForm";
 import { withStyles } from "@material-ui/core";
-import Snackbar from "@material-ui/core/Snackbar";
-import MuiAlert from "@material-ui/lab/Alert";
 import { useHistory } from "react-router-dom";
 import { AuthenticatedContext } from "../contexts/AuthenticatedContext";
+import { AlertContext } from "../contexts/AlertContext";
 import HomeForm from "./HomeForm";
 import MiniStory from "./MiniStory";
 import styles from "../styles/homeStyles";
@@ -19,22 +18,13 @@ function Home(props) {
   const { classes } = props;
   const [titleRef, changeTitleRef] = useForm("");
   const [textRef, changeTextRef] = useForm("");
-  const [open, setOpen] = useState(false);
   const [timeIntervalRef, changeTimeIntervalRef] = useState(30);
   const [roundsRef, changeRoundsRef] = useState(5);
-  const [alert, changeAlert] = useState("");
   const [stories, changeStories] = useState([]);
   const [loading, changeLoading] = useState(true);
   const { user } = useContext(AuthenticatedContext);
   const [chosenEmoji, changeChosenEmoji] = useState(randomEmoji);
-
-  const Alert = (props) => {
-    return <MuiAlert elevation={6} variant='filled' {...props} />;
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
+  const { openSnackbar, setAlert, SnackbarAlert } = useContext(AlertContext);
 
   useEffect(() => {
     updateHomePage();
@@ -83,7 +73,6 @@ function Home(props) {
 
   // Handler for when we add to story, checks our database to see if there is a story with that name already, and if there isn't adds to database
   const handleSubmit = async (e) => {
-    console.log("In here");
     if (user) {
       e.preventDefault();
       const storiesRef = await db.collection("stories").doc(titleRef).get(); // Fetch the data for storiesref
@@ -117,14 +106,14 @@ function Home(props) {
           await updateHomePage();
         } else {
           // If there is an existing story with the same name or archive with the same name
-          changeAlert("There is already a story or archive with that title");
-          setOpen(true);
+          setAlert("There is already a story or archive with that title");
+          openSnackbar();
         }
       } else {
-        changeAlert(
+        setAlert(
           "You've already posted 3 or more times, wait for the other posts to run out of time."
         );
-        setOpen(true);
+        openSnackbar();
       }
     } else history.push("/signup");
   };
@@ -132,9 +121,6 @@ function Home(props) {
   return (
     <>
       <HomeForm
-        alert={alert}
-        changeAlert={changeAlert}
-        setOpen={setOpen}
         classes={classes}
         loading={loading}
         stories={stories}
@@ -150,11 +136,7 @@ function Home(props) {
         chosenEmoji={chosenEmoji}
         changeChosenEmoji={changeChosenEmoji}
       />
-      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-        <Alert onClose={handleClose} severity='error'>
-          {alert}
-        </Alert>
-      </Snackbar>
+      <SnackbarAlert />
     </>
   );
 }

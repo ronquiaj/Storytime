@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Card, Button, Form } from "react-bootstrap";
 import Spinner from "./Spinner";
 import Dialog from "@material-ui/core/Dialog";
@@ -6,6 +6,7 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import Slide from "@material-ui/core/Slide";
 import ReactSlider from "./ReactSlider";
 import Picker from "emoji-picker-react";
+import { AlertContext } from "../contexts/AlertContext";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction='up' ref={ref} {...props} />;
@@ -26,12 +27,11 @@ export default function HomeForm(props) {
     roundsRef,
     changeRoundsRef,
     chosenEmoji,
-    changeChosenEmoji,
-    changeAlert,
-    setOpen: setOpenAlert
+    changeChosenEmoji
   } = props;
   const [open, setOpen] = useState(false);
   const [openEmoji, changeOpenEmoji] = useState(false);
+  const { openSnackbar, setAlert, SnackbarAlert } = useContext(AlertContext);
 
   const openOpen = () => {
     setOpen(true);
@@ -44,15 +44,15 @@ export default function HomeForm(props) {
   // used to ensure that title and beginning text are not empty
   const validate = () => {
     if (!textRef || !titleRef) {
-      setOpenAlert(true);
-      changeAlert("Fill in both the title input and the text input.");
+      openSnackbar();
+      setAlert("Fill in both the title input and the text input.");
     } else {
       if (titleRef.length < 2) {
-        setOpenAlert(true);
-        changeAlert("Title length must be more than 2 characters.");
+        openSnackbar();
+        setAlert("Title length must be more than 2 characters.");
       } else if (textRef.length < 9) {
-        setOpenAlert(true);
-        changeAlert("Text length must be 10 characters or more.");
+        openSnackbar();
+        setAlert("Text length must be 10 characters or more.");
       } else close();
     }
   };
@@ -141,7 +141,6 @@ export default function HomeForm(props) {
       <Dialog
         open={openEmoji}
         TransitionComponent={Transition}
-        keepMounted
         onClose={closeEmoji}
         aria-labelledby='alert-dialog-slide-title'
         aria-describedby='alert-dialog-slide-description'>
@@ -160,6 +159,7 @@ export default function HomeForm(props) {
       <Button onClick={openOpen} className={classes.addButton}>
         Add new story
       </Button>
+      <SnackbarAlert />
     </div>
   );
 }
