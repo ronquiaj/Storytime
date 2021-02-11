@@ -43,9 +43,31 @@ function Signin(props) {
     return doc.exists;
   };
 
-  const addUser = async () => {
+  //Checks to see whether or not to include default image and then creates uesr profile and account
+  const validatePictureAndAdd = async () => {
+    // Add profile picture to google cloud storage
+    if (profilePictureRef === "https://i.stack.imgur.com/l60Hf.png") {
+      addUser(profilePictureRef);
+    } else {
+      await storage
+        .ref(`/images/${displayNameRef}`)
+        .put(profilePictureRef)
+        .then(async () => {
+          await storage
+            .ref("images")
+            .child(displayNameRef)
+            .getDownloadURL()
+            .then(async (url) => {
+              addUser(url);
+            })
+            .catch((err) => console.log(err));
+        })
+        .catch((err) => console.log(err));
+    }
+  };
+
+  const addUser = async (url) => {
     // Add to Firebase Authentication
-    addPicture();
     await auth
       .createUserWithEmailAndPassword(emailRef, passwordRef)
       .then(async () => {
@@ -53,7 +75,7 @@ function Signin(props) {
         await currentUser
           .updateProfile({
             displayName: displayNameRef,
-            photoURL: profilePictureRef
+            photoURL: url
           })
           .catch((err) => {
             throw new Error(err);
@@ -61,7 +83,7 @@ function Signin(props) {
         const userData = {
           email: emailRef,
           displayName: displayNameRef,
-          photoURL: profilePictureRef,
+          photoURL: url,
           password: passwordRef,
           bio: "This is where your bio would be!",
           winningPosts: 0,
@@ -94,33 +116,13 @@ function Signin(props) {
       });
   };
 
-  const addPicture = async () => {
-    // Add profile picture to google cloud storage
-    if (profilePictureRef !== "https://i.stack.imgur.com/l60Hf.png") {
-      await storage
-        .ref(`/images/${displayNameRef}`)
-        .put(profilePictureRef)
-        .then(async () => {
-          await storage
-            .ref("images")
-            .child(displayNameRef)
-            .getDownloadURL()
-            .then(async (url) => {
-              changeProfilePictureRef(url);
-            })
-            .catch((err) => console.log(err));
-        })
-        .catch((err) => console.log(err));
-    }
-  };
-
   // Checks to see if passwords match and if the display name hasn't already been taken
   const validateAndAdd = () => {
     if (checkPassword()) {
       checkName().then((val) => {
         if (!val) {
           // If the display name hasn't already been taken
-          addUser();
+          validatePictureAndAdd();
         } else {
           setAlert("That display name has been taken");
           setAlertColor("error");
