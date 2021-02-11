@@ -1,25 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Card, Button, Form, Alert, Container } from "react-bootstrap";
+import { Card, Button, Form, Container } from "react-bootstrap";
 
 export default function LoginForm(props) {
-  const {
-    changeAlert,
-    handleClick,
-    emailRef,
-    changeEmailRef,
-    passwordRef,
-    changePasswordRef,
-    alert,
-    classes
-  } = props;
+  const { handleClick, emailRef, changeEmailRef, passwordRef, changePasswordRef, classes } = props;
   return (
     <Container style={{ maxWidth: "70vh", marginTop: "4rem" }}>
-      {alert ? (
-        <Alert onClick={() => changeAlert("")} variant='danger'>
-          <Alert.Heading>{alert}</Alert.Heading>
-        </Alert>
-      ) : null}
       <Card className={classes.loginForm}>
         <Card.Body>
           <h2 className='text-center mb-4'>Log in</h2>

@@ -1,10 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Card, Button, Form, Alert, Container } from "react-bootstrap";
+import { Card, Button, Form, Container } from "react-bootstrap";
 
 export default function SignupForm(props) {
   const {
-    changeAlert,
     handleClick,
     emailRef,
     changeEmailRef,
@@ -15,16 +14,10 @@ export default function SignupForm(props) {
     displayNameRef,
     changeDisplayNameRef,
     handleChange,
-    alert,
     classes
   } = props;
   return (
     <Container style={{ maxWidth: "70vh", marginTop: "4rem" }}>
-      {alert ? (
-        <Alert onClick={() => changeAlert("")} variant='danger'>
-          <Alert.Heading>{alert}</Alert.Heading>
-        </Alert>
-      ) : null}
       <Card className={classes.signupForm}>
         <Card.Body>
           <h2 className='text-center mb-4'>Sign Up</h2>
@@ -67,7 +60,6 @@ export default function SignupForm(props) {
                 onChange={handleChange}
                 type='file'
                 accept='image/png, image/jpeg, image/jpg'
-                required
               />
             </Form.Group>
             <Button className='w-100' type='submit'>

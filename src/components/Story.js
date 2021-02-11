@@ -31,7 +31,7 @@ function Story(props) {
   const [storyCreatedBy, changeStoryCreatedBy] = useState();
   const [storyEmoji, changeEmoji] = useState("😂");
   const [gameOver, changeGameOver] = useState(false);
-  const { openSnackbar, setAlert, SnackbarAlert } = useContext(AlertContext);
+  const { openSnackbar, setAlert, SnackbarAlert, setAlertColor } = useContext(AlertContext);
 
   // Click handler for adding a new post to the story
   const handleClick = async (e) => {
@@ -58,6 +58,7 @@ function Story(props) {
           })
           .catch((err) => err);
       } else {
+        setAlertColor("error");
         setAlert("You've already posted, wait for the time to run out.");
         openSnackbar();
       }
@@ -173,11 +174,13 @@ function Story(props) {
       );
       setTimeout(async () => {
         if (await archiveStory(title, updatedText, storyEmoji, storyCreatedBy)) {
+          setAlertColor("success");
           setAlert("Story successfully added to archive");
           openSnackbar();
           history.push(`/archive/${title}`);
         } else {
           setAlert("Story must be more than 160 characters to be added to the archive :(");
+          setAlertColor("error");
           openSnackbar();
           history.push("/");
         }

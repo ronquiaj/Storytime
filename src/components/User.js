@@ -24,7 +24,7 @@ function User(props) {
   const [pageLoaded, changePageLoaded] = useState(false);
   const { user, updateUser } = useContext(AuthenticatedContext);
   const { userUpdated } = useContext(UpdatedUserContext);
-  const { openSnackbar, setAlert, SnackbarAlert } = useContext(AlertContext);
+  const { openSnackbar, setAlert, SnackbarAlert, setAlertColor } = useContext(AlertContext);
 
   const handleSignout = () => {
     auth
@@ -32,6 +32,9 @@ function User(props) {
       .then(() => {
         updateUser(null);
         history.push("/");
+        setAlertColor("success");
+        setAlert("Successfully signed out");
+        openSnackbar();
         console.log("Successfully signed out...");
       })
       .catch((err) => {
@@ -39,9 +42,37 @@ function User(props) {
       });
   };
 
+  const updatePicture = () => {
+    storage
+      .ref(`/images/${user.displayName}`)
+      .put(profilePictureRef)
+      .then(() => {
+        storage
+          .ref("images")
+          .child(user.displayName)
+          .getDownloadURL()
+          .then((url) => {
+            db.collection("users")
+              .doc(user.displayName)
+              .set(
+                {
+                  bio: bioRef,
+                  photoURL: url || user.photoURL
+                },
+                { merge: true }
+              );
+            console.log(auth.currentUser);
+            auth.currentUser.updateProfile({
+              photoURL: url
+            });
+            userUpdated();
+          });
+      })
+      .catch((err) => console.log(err));
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Hello");
     if (profilePictureRef) {
       // If profile picture is going to be changed
       storage
@@ -66,15 +97,19 @@ function User(props) {
                         photoURL: url || user.photoURL
                       },
                       { merge: true }
-                    );
+                    )
+                    .then(() => {
+                      console.log(auth.currentUser);
+                      auth.currentUser.updateProfile({
+                        photoURL: url
+                      });
+                    });
                   userUpdated();
                 });
             })
             .catch((err) => console.log(err));
         })
-        .catch((err) => {
-          console.log("Error deleting picture", err);
-        });
+        .catch(() => updatePicture());
     } else {
       db.collection("users").doc(user.displayName).set(
         {
@@ -84,6 +119,7 @@ function User(props) {
       );
     }
     setAlert("Successfully updated!");
+    setAlertColor("success");
     openSnackbar();
   };
 
@@ -91,7 +127,6 @@ function User(props) {
     const image = e.target.files[0];
     changeProfilePictureRef(image);
     changeDisplayImageRef(URL.createObjectURL(image));
-    console.log(profilePictureRef);
   };
 
   useEffect(() => {
@@ -134,7 +169,7 @@ function User(props) {
       ) : (
         <Spinner />
       )}
-      <SnackbarAlert color='success' />
+      <SnackbarAlert />
     </div>
   );
 }

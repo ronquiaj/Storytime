@@ -31,7 +31,7 @@ export default function HomeForm(props) {
   } = props;
   const [open, setOpen] = useState(false);
   const [openEmoji, changeOpenEmoji] = useState(false);
-  const { openSnackbar, setAlert, SnackbarAlert } = useContext(AlertContext);
+  const { openSnackbar, setAlert, SnackbarAlert, setAlertColor } = useContext(AlertContext);
 
   const openOpen = () => {
     setOpen(true);
@@ -45,13 +45,16 @@ export default function HomeForm(props) {
   const validate = () => {
     if (!textRef || !titleRef) {
       openSnackbar();
+      setAlertColor("error");
       setAlert("Fill in both the title input and the text input.");
     } else {
       if (titleRef.length < 2) {
         openSnackbar();
+        setAlertColor("error");
         setAlert("Title length must be more than 2 characters.");
-      } else if (textRef.length < 9) {
+      } else if (textRef.length < 10) {
         openSnackbar();
+        setAlertColor("error");
         setAlert("Text length must be 10 characters or more.");
       } else close();
     }

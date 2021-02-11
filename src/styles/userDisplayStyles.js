@@ -100,8 +100,11 @@ const styles = {
     }
   },
   "@media (max-width: 600px)": {
+    paper: {
+      width: "95vh"
+    },
     profilePicture: {
-      width: "70%"
+      width: "90%"
     },
     imageSubmit: {
       marginRight: "1.5rem"

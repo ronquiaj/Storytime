@@ -12,7 +12,7 @@ function Post(props) {
   const { classes, text, title, votes } = props;
   const { photoURL, username } = props.owner;
   const { user } = useContext(AuthenticatedContext);
-  const { openSnackbar, setAlert, SnackbarAlert } = useContext(AlertContext);
+  const { openSnackbar, setAlert, SnackbarAlert, setAlertColor } = useContext(AlertContext);
   const history = useHistory();
 
   // Function to handle a user that has already voted, returns an object with voted and addToVote values
@@ -22,6 +22,7 @@ function Post(props) {
       if (voteValue === 1) {
         // voteValue represents the user clicking either up or down
         setAlert("You can't vote more than once");
+        setAlertColor("error");
         openSnackbar();
         return { voted: 1, addToVote: 0 };
       } else if (voteValue === -1) {
@@ -31,6 +32,7 @@ function Post(props) {
     } else if (currentVoter.voted === -1) {
       if (voteValue === -1) {
         setAlert("You can't vote more than once");
+        setAlertColor("error");
         openSnackbar();
         return { voted: -1, addToVote: 0 };
       } else if (voteValue === 1) {

@@ -24,13 +24,13 @@ function Home(props) {
   const [loading, changeLoading] = useState(true);
   const { user } = useContext(AuthenticatedContext);
   const [chosenEmoji, changeChosenEmoji] = useState(randomEmoji);
-  const { openSnackbar, setAlert, SnackbarAlert } = useContext(AlertContext);
+  const { openSnackbar, setAlert, SnackbarAlert, setAlertColor } = useContext(AlertContext);
 
   useEffect(() => {
     updateHomePage();
     const interval = setInterval(() => {
       updateHomePage();
-    }, 7500);
+    }, 3000);
     return () => clearInterval(interval);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -96,23 +96,27 @@ function Home(props) {
             .doc(titleRef)
             .set({
               title: titleRef,
+              lastPost: "$$$",
               text: `${textRef} `,
               posts: [],
               emoji: chosenEmoji,
               timeInformation,
-              createdBy: user.displayName
+              createdBy: user.displayName,
+              canPost: true
             });
           console.log("Add successful!");
           await updateHomePage();
         } else {
           // If there is an existing story with the same name or archive with the same name
           setAlert("There is already a story or archive with that title");
+          setAlertColor("error");
           openSnackbar();
         }
       } else {
         setAlert(
           "You've already posted 3 or more times, wait for the other posts to run out of time."
         );
+        setAlertColor("error");
         openSnackbar();
       }
     } else history.push("/signup");

@@ -7,6 +7,7 @@ export const AlertContext = createContext();
 export function AlertProvider(props) {
   const [open, setOpen] = useState(false);
   const [alert, setAlert] = useState("");
+  const [color, setAlertColor] = useState("error");
 
   const closeSnackbar = () => {
     setOpen(false);
@@ -20,10 +21,10 @@ export function AlertProvider(props) {
     return <MuiAlert elevation={6} variant='filled' {...props} />;
   };
 
-  const SnackbarAlert = ({ color }) => {
+  const SnackbarAlert = () => {
     return (
       <Snackbar open={open} autoHideDuration={3500} onClose={closeSnackbar}>
-        <Alert onClose={closeSnackbar} severity={color || "error"}>
+        <Alert onClose={closeSnackbar} severity={color}>
           {alert}
         </Alert>
       </Snackbar>
@@ -31,7 +32,7 @@ export function AlertProvider(props) {
   };
 
   return (
-    <AlertContext.Provider value={{ openSnackbar, setAlert, SnackbarAlert }}>
+    <AlertContext.Provider value={{ openSnackbar, setAlert, SnackbarAlert, setAlertColor }}>
       {props.children}
     </AlertContext.Provider>
   );

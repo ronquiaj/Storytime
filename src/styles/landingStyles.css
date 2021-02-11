@@ -2,5 +2,103 @@
   z-index: 1;
   width: 100vw;
   height: 100vh;
-  background: black;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: url("https://firebasestorage.googleapis.com/v0/b/storytime-7f96d.appspot.com/o/Pattern-Randomized.svg?alt=media&token=32f07445-ca4d-4d04-b61a-a6dc6fdc4f0f");
+  animation-fill-mode: forwards;
+}
+
+.animation-pencil {
+  position: absolute;
+  z-index: 2;
+  width: 20rem;
+  height: 17rem;
+  top: 50vh;
+  left: 50vw;
+  transform: rotate(90deg);
+  transform: translateX(-50%) translateY(-50%);
+  animation: 4.3s pencil;
+  opacity: 1;
+}
+
+.animation-logo {
+  position: absolute;
+  z-index: 3;
+  top: 50vh;
+  left: 50vw;
+  width: 25rem;
+  height: 20rem;
+  animation: 4.4s logo;
+  transform: translateY(-50%) translateX(-50%);
+  cursor: pointer;
+}
+
+@keyframes logo {
+  0% {
+    cursor: none;
+    opacity: 0;
+  }
+  90% {
+    cursor: none;
+    opacity: 0;
+  }
+  100% {
+    cursor: none;
+    opacity: 1;
+  }
+}
+
+@keyframes pencil {
+  0% {
+    opacity: 1;
+    top: -10rem;
+    left: -10rem;
+  }
+  20% {
+    top: 100vh;
+    left: 100vw;
+  }
+
+  30% {
+    transform: rotate(200deg);
+  }
+
+  40% {
+    top: 55vh;
+    left: -20vw;
+  }
+
+  50% {
+    transform: rotate(-30deg);
+  }
+
+  60% {
+    top: -10vh;
+    left: 110vw;
+  }
+
+  70% {
+    transform: rotate(180deg);
+  }
+
+  80% {
+    top: 85vh;
+    left: -25vw;
+  }
+
+  90% {
+    top: 50vh;
+    left: 50vw;
+    transform: rotate(-20deg);
+    transform: translateX(-50%) translateY(-50%);
+  }
+  99% {
+    transform: rotate(-20deg);
+    transform: translateX(-50%) translateY(-50%);
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+  }
 }

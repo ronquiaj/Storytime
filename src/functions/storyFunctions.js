@@ -15,53 +15,65 @@ const fetchStoryData = async (title) => {
 
 // Takes in postdata (basically all the documents posts) from state, look at which has the highest vote, and then updates the text and resets the posts
 const addToStory = async (title, text, postData, changePosts, setDisplayText) => {
+  const storyData = await fetchStoryData(title);
+  const { lastPost, canPost } = storyData;
   let winner = { votes: -9999, text: "" };
   let tieList = [];
   let updatedText = text;
-  if (postData.length > 2 || postData.length === 1) {
-    for (let post of postData) {
-      if (post.props.votes > winner.votes) {
-        winner["votes"] = post.props.votes;
-        winner["text"] = post.props.text;
-        winner["username"] = post.props.owner.username;
-        tieList = [winner];
-      } else if (post.props.votes === winner.votes) {
-        tieList.push(post.props);
+  if (canPost) {
+    if (postData.length > 2 || postData.length === 1) {
+      for (let post of postData) {
+        if (post.props.votes > winner.votes) {
+          winner["votes"] = post.props.votes;
+          winner["text"] = post.props.text;
+          winner["username"] = post.props.owner.username;
+          tieList = [winner];
+        } else if (post.props.votes === winner.votes) {
+          tieList.push(post.props);
+        }
+      }
+    } else if (postData.length === 2) {
+      if (postData[0].props.votes < postData[1].props.votes) {
+        winner["text"] = postData[1].props.text;
+        winner["username"] = postData[1].props.owner.username;
+      } else if (postData[1].props.votes < postData[0].props.votes) {
+        winner["text"] = postData[0].props.text;
+        winner["username"] = postData[0].props.owner.username;
+      } else {
+        winner["text"] = postData[Math.floor(Math.random() * 2)].props.text;
+        winner["username"] = postData[Math.floor(Math.random() * 2)].props.owner.username;
       }
     }
-  } else if (postData.length === 2) {
-    if (postData[0].props.votes < postData[1].props.votes) {
-      winner["text"] = postData[1].props.text;
-      winner["username"] = postData[1].props.owner.username;
-    } else if (postData[1].props.votes < postData[0].props.votes) {
-      winner["text"] = postData[0].props.text;
-      winner["username"] = postData[0].props.owner.username;
-    } else {
-      winner["text"] = postData[Math.floor(Math.random() * 2)].props.text;
-      winner["username"] = postData[Math.floor(Math.random() * 2)].props.owner.username;
+
+    if (tieList.length > 1) {
+      winner["text"] = tieList[Math.floor(Math.random() * tieList.length)].text;
+      winner["username"] = tieList[Math.floor(Math.random() * tieList.length)].username;
     }
-  }
 
-  if (tieList.length > 1) {
-    winner["text"] = tieList[Math.floor(Math.random() * tieList.length)].text;
-    winner["username"] = tieList[Math.floor(Math.random() * tieList.length)].username;
-  }
-
-  //If the text did change, meaning there was at least one post on the story
-  if (winner.text) {
-    updatedText = `${text + winner.text} `;
-    await db.collection("stories").doc(title).update({
-      posts: [],
-      text: updatedText
-    });
-    await db
-      .collection("users")
-      .doc(winner.username)
-      .update({
-        winningPosts: firebase.firestore.FieldValue.increment(1)
-      });
-    changePosts([]);
-    setDisplayText(updatedText);
+    //If the text did change, meaning there was at least one post on the story
+    if (winner.text) {
+      if (winner.text !== lastPost) {
+        updatedText = `${text + winner.text} `;
+        await db.collection("stories").doc(title).update({
+          posts: [],
+          text: updatedText,
+          lastPost: winner.text,
+          canPost: false
+        });
+        await db
+          .collection("users")
+          .doc(winner.username)
+          .update({
+            winningPosts: firebase.firestore.FieldValue.increment(1)
+          });
+        changePosts([]);
+        setDisplayText(updatedText);
+        setTimeout(
+          async () => await db.collection("stories").doc(title).update({ canPost: true }),
+          5000
+        );
+      }
+    }
   }
   return updatedText;
 };

@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { auth } from "../firebase/Firebase";
 import useForm from "../hooks/useForm";
@@ -6,13 +6,14 @@ import { AuthenticatedContext } from "../contexts/AuthenticatedContext";
 import LoginForm from "./LoginForm";
 import styles from "../styles/loginStyles";
 import { withStyles } from "@material-ui/core";
+import { AlertContext } from "../contexts/AlertContext";
 
 function Signin(props) {
   const { classes } = props;
   const [emailRef, changeEmailRef] = useForm("");
   const [passwordRef, changePasswordRef] = useForm("");
   const { user, updateUser } = useContext(AuthenticatedContext);
-  const [alert, changeAlert] = useState("");
+  const { openSnackbar, SnackbarAlert, setAlert, setAlertColor } = useContext(AlertContext);
   const history = useHistory();
   const handleClick = (e) => {
     e.preventDefault();
@@ -22,10 +23,15 @@ function Signin(props) {
         const currentUser = auth.currentUser;
         updateUser(currentUser);
         history.push("/");
+        setAlertColor("success");
+        setAlert(`Welcome back, ${currentUser.displayName}`);
+        openSnackbar();
         console.log("Successfully signed back in");
       })
       .catch(() => {
-        changeAlert("Invalid password");
+        openSnackbar();
+        setAlertColor("error");
+        setAlert("Invalid password");
       });
   };
 
@@ -37,16 +43,17 @@ function Signin(props) {
   }, [user, history]);
 
   return (
-    <LoginForm
-      classes={classes}
-      changeAlert={changeAlert}
-      handleClick={handleClick}
-      emailRef={emailRef}
-      changeEmailRef={changeEmailRef}
-      passwordRef={passwordRef}
-      changePasswordRef={changePasswordRef}
-      alert={alert}
-    />
+    <>
+      <LoginForm
+        classes={classes}
+        handleClick={handleClick}
+        emailRef={emailRef}
+        changeEmailRef={changeEmailRef}
+        passwordRef={passwordRef}
+        changePasswordRef={changePasswordRef}
+      />
+      <SnackbarAlert />
+    </>
   );
 }
 
