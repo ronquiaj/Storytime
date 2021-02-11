@@ -23,13 +23,14 @@ const addToStory = async (title, text, postData, changePosts, setDisplayText) =>
   if (canPost) {
     if (postData.length > 2 || postData.length === 1) {
       for (let post of postData) {
+        console.log(post.props);
         if (post.props.votes > winner.votes) {
           winner["votes"] = post.props.votes;
           winner["text"] = post.props.text;
           winner["username"] = post.props.owner.username;
           tieList = [winner];
         } else if (post.props.votes === winner.votes) {
-          tieList.push(post.props);
+          tieList.push({ text: post.props.text, username: post.props.owner.username });
         }
       }
     } else if (postData.length === 2) {
@@ -46,12 +47,15 @@ const addToStory = async (title, text, postData, changePosts, setDisplayText) =>
     }
 
     if (tieList.length > 1) {
+      console.log(tieList);
       winner["text"] = tieList[Math.floor(Math.random() * tieList.length)].text;
       winner["username"] = tieList[Math.floor(Math.random() * tieList.length)].username;
+      console.log("Tielist has more than 2 people, printing winner of the tielist, ", winner);
     }
 
     //If the text did change, meaning there was at least one post on the story
     if (winner.text) {
+      console.log("posting stuff");
       if (winner.text !== lastPost) {
         updatedText = `${text + winner.text} `;
         await db.collection("stories").doc(title).update({
@@ -68,10 +72,10 @@ const addToStory = async (title, text, postData, changePosts, setDisplayText) =>
           });
         changePosts([]);
         setDisplayText(updatedText);
-        setTimeout(
-          async () => await db.collection("stories").doc(title).update({ canPost: true }),
-          5000
-        );
+        setTimeout(async () => {
+          await db.collection("stories").doc(title).update({ canPost: true });
+          console.log("changing canPost");
+        }, 3000);
       }
     }
   }

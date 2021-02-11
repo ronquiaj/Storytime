@@ -89,7 +89,7 @@ const styles = {
       margin: "2rem auto"
     },
     profilePicture: {
-      width: "40%"
+      width: "65vw"
     },
     imageSubmit: {
       marginTop: "1.5rem"
@@ -104,10 +104,10 @@ const styles = {
       width: "95vh"
     },
     profilePicture: {
-      width: "90%"
+      width: "80vw"
     },
-    imageSubmit: {
-      marginRight: "1.5rem"
+    editUserForm: {
+      width: "100vw"
     }
   }
 };
