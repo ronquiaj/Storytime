@@ -12,9 +12,21 @@ const styles = {
     alignItems: "center",
     justifyContent: "space-around",
     textAlign: "center",
-    marginRight: "3rem"
+    marginRight: "3rem",
+    animation: "fade-in 0.7s"
   },
-  user: {},
+  "@global": {
+    "@keyframes fade-in": {
+      "0%": {
+        position: "absolute",
+        transform: "translateX(-20vw)",
+        opacity: "0"
+      },
+      "100%": {
+        opacity: "1"
+      }
+    }
+  },
   image: {
     width: "5.5rem",
     height: "5rem",

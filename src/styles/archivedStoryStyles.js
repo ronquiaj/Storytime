@@ -46,7 +46,7 @@ const archiveStyles = {
   },
   "@media (max-width: 600px)": {
     title: {
-      fontSize: "2rem"
+      fontSize: "1.6rem"
     }
   }
 };

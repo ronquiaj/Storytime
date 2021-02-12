@@ -17,7 +17,8 @@ export default function StoryDisplay(props) {
     totalRounds,
     secondsLeft,
     gameOver,
-    emoji
+    emoji,
+    deletingPosts
   } = props;
   return (
     <Container className={classes.container}>
@@ -51,22 +52,29 @@ export default function StoryDisplay(props) {
             <h1 className={classes.archive}>Redirecting...</h1>
           ) : (
             <>
-              <ul className={classes.postContainer}>{posts}</ul>
-              <Form onSubmit={handleClick} className={classes.post}>
-                <Form.Group>
-                  <Form.Label>New post</Form.Label>
-                  <Form.Control
-                    maxLength='90'
-                    value={newPost}
-                    onChange={changeNewPost}
-                    type='text'
-                    required
-                  />
-                </Form.Group>
-                <Button className='w-100' type='submit'>
-                  Post
-                </Button>
-              </Form>{" "}
+              {deletingPosts ? (
+                <Spinner />
+              ) : (
+                <>
+                  <ul className={classes.postContainer}>{posts}</ul>
+                  <Form onSubmit={handleClick} className={classes.post}>
+                    <Form.Group>
+                      <Form.Label>New post</Form.Label>
+                      <Form.Control
+                        autoFocus
+                        maxLength='90'
+                        value={newPost}
+                        onChange={changeNewPost}
+                        type='text'
+                        required
+                      />
+                    </Form.Group>
+                    <Button className='w-100' type='submit'>
+                      Post
+                    </Button>
+                  </Form>
+                </>
+              )}
             </>
           )}
         </>
