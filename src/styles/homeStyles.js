@@ -7,7 +7,7 @@ const styles = {
   },
   container: {
     display: "flex",
-    justifyContent: "center",
+    justifyContent: "",
     alignItems: "center"
   },
   titleLink: {

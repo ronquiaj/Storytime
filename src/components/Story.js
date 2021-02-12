@@ -31,6 +31,7 @@ function Story(props) {
   const [storyCreatedBy, changeStoryCreatedBy] = useState();
   const [storyEmoji, changeEmoji] = useState("😂");
   const [gameOver, changeGameOver] = useState(false);
+  const [deletingPosts, setDeletingPosts] = useState(false);
   const { openSnackbar, setAlert, SnackbarAlert, setAlertColor } = useContext(AlertContext);
 
   // Click handler for adding a new post to the story
@@ -98,6 +99,9 @@ function Story(props) {
   // This is activated when we go to a new round, changes current round and sets the database current round to the newcurrentround
   useEffect(() => {
     if (newCurrentRound) {
+      if (displayPosts.length >= 1) {
+        setDeletingPosts(true);
+      }
       const updateCurrentRoundInDatabase = async () => {
         await db.collection("stories").doc(title).update({
           "timeInformation.currentRound": newCurrentRound
@@ -106,7 +110,11 @@ function Story(props) {
       };
       updateCurrentRoundInDatabase();
       addToStory(title, displayText, displayPosts, changeDisplayPosts, changeText);
-      setTimeout(() => changeDisplayPosts([]), 579);
+      setTimeout(() => {
+        changeDisplayPosts([]);
+        setDeletingPosts(false);
+      }, 579);
+
       if (newCurrentRound === totalRounds) {
         setTimeout(async () => {
           changeGameOver(true);
@@ -195,6 +203,7 @@ function Story(props) {
   return (
     <>
       <StoryDisplay
+        deletingPosts={deletingPosts}
         classes={classes}
         loading={loading}
         title={title}

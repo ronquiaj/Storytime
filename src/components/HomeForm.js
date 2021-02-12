@@ -155,8 +155,14 @@ export default function HomeForm(props) {
         </Card>
       </Dialog>
 
-      <div className={classes.container}>
-        {loading ? <Spinner /> : <div className={classes.archiveContainer}>{stories}</div>}
+      <div>
+        {loading ? (
+          <div className={classes.container}>
+            <Spinner />
+          </div>
+        ) : (
+          <div className={classes.archiveContainer}>{stories}</div>
+        )}
       </div>
 
       <Button onClick={openOpen} className={classes.addButton}>
