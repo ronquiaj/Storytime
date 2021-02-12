@@ -74,7 +74,6 @@ const addToStory = async (title, text, postData, changePosts, setDisplayText) =>
         setDisplayText(updatedText);
         setTimeout(async () => {
           await db.collection("stories").doc(title).update({ canPost: true });
-          console.log("changing canPost");
         }, 3000);
       }
     }

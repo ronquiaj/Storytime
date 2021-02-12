@@ -106,7 +106,7 @@ function Story(props) {
       };
       updateCurrentRoundInDatabase();
       addToStory(title, displayText, displayPosts, changeDisplayPosts, changeText);
-      setTimeout(() => changeDisplayPosts([]), 1450);
+      setTimeout(() => changeDisplayPosts([]), 579);
       if (newCurrentRound === totalRounds) {
         setTimeout(async () => {
           changeGameOver(true);

@@ -107,7 +107,8 @@ const styles = {
       width: "80vw"
     },
     editUserForm: {
-      width: "100vw"
+      width: "100vw",
+      margin: "1rem auto"
     }
   }
 };

@@ -78,7 +78,10 @@ function Home(props) {
       const storiesRef = await db.collection("stories").doc(titleRef).get(); // Fetch the data for storiesref
       const archiveRef = await db.collection("archive").doc(titleRef).get(); // Fetch the data for storiesref
       const userRef = await db.collection("users").doc(user.displayName).get();
-      if (!(userRef.data().activePosts > 2)) {
+      if (userRef.data().activePosts < 3) {
+        if (userRef.data().activePosts < 0) {
+          await db.collection("users").doc(user.displayName).update({ activePosts: 0 });
+        }
         if (!storiesRef.exists && !archiveRef.exists) {
           // Below object represents the time information for this story, such as what round we are currently on, and the end of each round
           const timeInformation = {

@@ -1,11 +1,9 @@
 const archiveStyles = {
   storyCard: {
-    margin: "3rem 0",
     opacity: "0.8",
     borderRadius: "30px",
     backgroundColor: "white",
     padding: 0,
-    marginBottom: "2rem",
     width: "30vw",
     webkitBoxShadow: "0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset",
     mozBoxShadow: "0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset",
@@ -18,15 +16,19 @@ const archiveStyles = {
     transition: "0.6s all",
     "&:hover a": {
       textDecoration: "none",
-      color: "white"
+      color: "white",
+      margin: 0
     },
     "&:hover": {
       width: "11rem",
-      height: "3.3rem"
+      height: "3.3rem",
+      margin: 0
     }
   },
   submit: {
-    width: "100%"
+    width: "100%",
+    display: "flex",
+    justifyContent: "space-between"
   },
   container: {
     display: "flex",
@@ -45,8 +47,9 @@ const archiveStyles = {
   archiveContainer: {
     display: "flex",
     alignItems: "center",
-    flexFlow: "row wrap",
-    marginLeft: "3.8rem"
+    justifyContent: "space-around",
+    margin: "2rem",
+    flexFlow: "row wrap"
   },
   "@media (min-width: 768px)": {
     storyCard: {

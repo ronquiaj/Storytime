@@ -1,17 +1,17 @@
 import React from "react";
-import { Card, Button, Col, Row } from "react-bootstrap";
+import { Card, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 export default function MiniStory(props) {
   const { title, classes, text, emoji, dateCreated } = props;
   return (
-    <Col key={title}>
+    <div key={title}>
       <Card className={classes.storyCard}>
         <Card.Body>
           <Card.Title>{title}</Card.Title>
           <Card.Text>{text.length < 165 ? text : `${text.slice(0, 165)}...`}</Card.Text>
-          <Row className={classes.submit}>
-            <Col className={classes.visit}>
+          <div className={classes.submit}>
+            <div className={classes.visit}>
               <Button variant='primary' className={classes.button}>
                 <Link
                   className={classes.titleLink}
@@ -19,11 +19,11 @@ export default function MiniStory(props) {
                   Visit this story
                 </Link>
               </Button>
-            </Col>
-            <Col className={classes.emoji}>{emoji}</Col>
-          </Row>
+            </div>
+            <div className={classes.emoji}>{emoji}</div>
+          </div>
         </Card.Body>
       </Card>
-    </Col>
+    </div>
   );
 }

@@ -43,6 +43,11 @@ const archiveStyles = {
     container: {
       margin: "1rem auto"
     }
+  },
+  "@media (max-width: 600px)": {
+    title: {
+      fontSize: "2rem"
+    }
   }
 };
 
