@@ -33,7 +33,7 @@
     "eject": "react-scripts eject",
     "quick-upload": "npm run build && firebase deploy",
     "upload": "npm run build && git add . && git commit -m && git push -u origin && firebase deploy",
-    "practice": "git add . && git commit -m $npm_config-msg",
+    "practice": "git add . && git commit -m $npm_config_msg",
     "demo": "echo \"Hello $npm_config_first $npm_config_last\""
   },
   "eslintConfig": {
