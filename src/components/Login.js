@@ -13,7 +13,8 @@ function Signin(props) {
   const [emailRef, changeEmailRef] = useForm("");
   const [passwordRef, changePasswordRef] = useForm("");
   const { user, updateUser } = useContext(AuthenticatedContext);
-  const { openSnackbar, SnackbarAlert, setAlert, setAlertColor } = useContext(AlertContext);
+  const { openSnackbar, SnackbarAlert, setAlert, setAlertColor } =
+    useContext(AlertContext);
   const history = useHistory();
   const handleClick = (e) => {
     e.preventDefault();
@@ -26,7 +27,6 @@ function Signin(props) {
         setAlertColor("success");
         setAlert(`Welcome back, ${currentUser.displayName}`);
         openSnackbar();
-        console.log("Successfully signed back in");
       })
       .catch(() => {
         openSnackbar();

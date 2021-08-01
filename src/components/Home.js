@@ -9,7 +9,11 @@ import { AlertContext } from "../contexts/AlertContext";
 import HomeForm from "./HomeForm";
 import MiniStory from "./MiniStory";
 import styles from "../styles/homeStyles";
-import { partitionRounds, calculateTimeDifference, getCurrentTime } from "../functions/timer";
+import {
+  partitionRounds,
+  calculateTimeDifference,
+  getCurrentTime,
+} from "../functions/timer";
 import { archiveStory } from "../functions/storyFunctions";
 import randomEmoji from "../functions/getEmoji";
 
@@ -24,7 +28,8 @@ function Home(props) {
   const [loading, changeLoading] = useState(true);
   const { user } = useContext(AuthenticatedContext);
   const [chosenEmoji, changeChosenEmoji] = useState(randomEmoji);
-  const { openSnackbar, setAlert, SnackbarAlert, setAlertColor } = useContext(AlertContext);
+  const { openSnackbar, setAlert, SnackbarAlert, setAlertColor } =
+    useContext(AlertContext);
 
   useEffect(() => {
     updateHomePage();
@@ -54,10 +59,15 @@ function Home(props) {
           0
         ) {
           await archiveStory(title, text, emoji, createdBy);
-          console.log("cleaning");
         } else {
           newStories.push(
-            <MiniStory key={title} title={title} classes={classes} text={text} emoji={emoji} />
+            <MiniStory
+              key={title}
+              title={title}
+              classes={classes}
+              text={text}
+              emoji={emoji}
+            />
           );
         }
       });
@@ -65,7 +75,9 @@ function Home(props) {
     } else {
       // If there are no existing stories
       changeStories(
-        <h1 style={{ margin: "4rem", textAlign: "center" }}>There are no stories yet!</h1>
+        <h1 style={{ margin: "4rem", textAlign: "center" }}>
+          There are no stories yet!
+        </h1>
       );
     }
     changeLoading(false);
@@ -80,7 +92,10 @@ function Home(props) {
       const userRef = await db.collection("users").doc(user.displayName).get();
       if (userRef.data().activePosts < 3) {
         if (userRef.data().activePosts < 0) {
-          await db.collection("users").doc(user.displayName).update({ activePosts: 0 });
+          await db
+            .collection("users")
+            .doc(user.displayName)
+            .update({ activePosts: 0 });
         }
         if (!storiesRef.exists && !archiveRef.exists) {
           // Below object represents the time information for this story, such as what round we are currently on, and the end of each round
@@ -88,12 +103,17 @@ function Home(props) {
             totalRounds: parseInt(roundsRef),
             currentRound: 1,
             timeInterval: parseInt(timeIntervalRef),
-            roundEnd: partitionRounds(parseInt(timeIntervalRef), parseInt(roundsRef))
+            roundEnd: partitionRounds(
+              parseInt(timeIntervalRef),
+              parseInt(roundsRef)
+            ),
           };
           await db
             .collection("users")
             .doc(user.displayName)
-            .update({ activePosts: firebase.firestore.FieldValue.increment(1) });
+            .update({
+              activePosts: firebase.firestore.FieldValue.increment(1),
+            });
           await db
             .collection("stories")
             .doc(titleRef)
@@ -105,9 +125,8 @@ function Home(props) {
               emoji: chosenEmoji,
               timeInformation,
               createdBy: user.displayName,
-              canPost: true
+              canPost: true,
             });
-          console.log("Add successful!");
           await updateHomePage();
         } else {
           // If there is an existing story with the same name or archive with the same name

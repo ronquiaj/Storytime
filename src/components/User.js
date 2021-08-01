@@ -24,7 +24,8 @@ function User(props) {
   const [pageLoaded, changePageLoaded] = useState(false);
   const { user, updateUser } = useContext(AuthenticatedContext);
   const { userUpdated } = useContext(UpdatedUserContext);
-  const { openSnackbar, setAlert, SnackbarAlert, setAlertColor } = useContext(AlertContext);
+  const { openSnackbar, setAlert, SnackbarAlert, setAlertColor } =
+    useContext(AlertContext);
 
   const handleSignout = () => {
     auth
@@ -57,13 +58,12 @@ function User(props) {
               .set(
                 {
                   bio: bioRef,
-                  photoURL: url || user.photoURL
+                  photoURL: url || user.photoURL,
                 },
                 { merge: true }
               );
-            console.log(auth.currentUser);
             auth.currentUser.updateProfile({
-              photoURL: url
+              photoURL: url,
             });
             userUpdated();
           });
@@ -94,14 +94,13 @@ function User(props) {
                     .set(
                       {
                         bio: bioRef,
-                        photoURL: url || user.photoURL
+                        photoURL: url || user.photoURL,
                       },
                       { merge: true }
                     )
                     .then(() => {
-                      console.log(auth.currentUser);
                       auth.currentUser.updateProfile({
-                        photoURL: url
+                        photoURL: url,
                       });
                     });
                   userUpdated();
@@ -113,7 +112,7 @@ function User(props) {
     } else {
       db.collection("users").doc(user.displayName).set(
         {
-          bio: bioRef
+          bio: bioRef,
         },
         { merge: true }
       );
