@@ -12,6 +12,7 @@
     "@testing-library/user-event": "^12.1.10",
     "bootstrap": "^4.5.3",
     "date-arithmetic": "^4.1.0",
+    "dotenv": "^10.0.0",
     "emoji-picker-react": "^3.4.2",
     "firebase": "^8.2.1",
     "firebase-admin": "^9.4.2",
@@ -31,7 +32,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "upload": "npm run build && git add . && git commit -m -- && git push -u origin && firebase deploy"
+    "upload": "npm run build && git add . && git commit -m && git push -u origin && firebase deploy"
   },
   "eslintConfig": {
     "extends": [
