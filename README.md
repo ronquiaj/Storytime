@@ -1,5 +1,7 @@
 # Storytime, an interactive story-building website!
 
+![image](https://user-images.githubusercontent.com/60367655/127778104-813d6652-fe71-41c7-8735-2549e37bc96a.png)
+
 ---
 
 Storytime is a dynamic interactive story building website where you can create stories in real time with your friends!
