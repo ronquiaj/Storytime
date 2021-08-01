@@ -32,7 +32,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "upload": "npm run build && git add . && git commit -m && git push -u origin && firebase deploy"
+    "upload": "npm run build && git add . && git commit && git push -u origin && firebase deploy"
   },
   "eslintConfig": {
     "extends": [
